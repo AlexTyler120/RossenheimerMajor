@@ -1,0 +1,11 @@
+<launch>
+  <arg name="cmd_vel" default="/cmd_vel"/>
+  <arg name="name" default="turtlebot3"/>
+
+  <param name="cmd_vel_topic_name" value="$(arg cmd_vel)"/>
+
+  <!-- <node name="main" pkg="Rossenheimer" type="main" required="true" output="screen"/>
+  <node name="movement" pkg="Rossenheimer" type="movement" required="true" output="screen"/> -->
+  <node name="main" pkg="Rossenheimer" type="main" required="true" output="screen"/>
+  <!-- <node name="sensors" pkg="Rossenheimer" type="sensors" required="true" output="screen"/> -->
+</launch>
