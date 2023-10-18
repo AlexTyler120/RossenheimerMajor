@@ -51,7 +51,8 @@ class Odometer: public Sensor
         double tb3_pose_;
         double prev_tb3_pose_;
 
-        double odom_x, odom_y;
+        double odom_x;
+        double odom_y;
         
 };
 

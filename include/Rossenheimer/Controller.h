@@ -17,12 +17,13 @@
 
 // enum:case structure for
 enum
-{GET_TB3_DIRECTION = 0,
-TB3_FIND_WALL,
-TB3_RIGHT_TURN,
-TB3_WALL_FOLLOW,
-TB3_FIND_FLAG,
-TB3_STOP};
+{   GET_TB3_DIRECTION = 0,
+    TB3_FIND_WALL,
+    TB3_RIGHT_TURN,
+    TB3_WALL_FOLLOW,
+    TB3_FIND_FLAG,
+    TB3_STOP
+};
 
 
 //---Controller Implementation---------------------------------------------------------------
@@ -40,38 +41,38 @@ class Controller
 
 
    private:
-       //--Functionality--
-      
-       // findWall sets the TurtleBot3 on an arc trajectory leftward until a wall is found
-       void findWall(Motor* readMotor);
+        //--Functionality--
+        
+        // findWall sets the TurtleBot3 on an arc trajectory leftward until a wall is found
+        void findWall(Motor* readMotor);
 
 
-       // rightTurn turns the TurtleBot3 right until its pose is parallel to the left wall
-       void rightTurn(Sensor* readOdometer, Sensor* readLidar, Motor* readMotor);
+        // rightTurn turns the TurtleBot3 right until its pose is parallel to the left wall
+        void rightTurn(Sensor* readOdometer, Sensor* readLidar, Motor* readMotor);
 
 
-       // wallFollow continuously manipulates the angular velocity of the TurtleBot3
-       // to maintain the desired distance from the left wall, and direction parallel to
-       // the left wall
-       void wallFollow(double left_distance, Sensor* readLidar, Sensor* readOdometer, Motor* readMotor);
+        // wallFollow continuously manipulates the angular velocity of the TurtleBot3
+        // to maintain the desired distance from the left wall, and direction parallel to
+        // the left wall
+        void wallFollow(double left_distance, Sensor* readLidar, Sensor* readOdometer, Motor* readMotor);
 
        //ApproachFlag is used to find its destination
-       void approachFlag(Camera* readCamera, Motor* readMotor);
+        void approachFlag(Camera* readCamera, Motor* readMotor);
   
        //--Private Member Variables--
-       uint8_t turtlebot3_state_num;        // variable to store case for algorithm
+        uint8_t turtlebot3_state_num;        // variable to store case for algorithm
 
        //--Constant Definitions--
-        double PROXIMITY = 0.4; // prev 0.2
-        double WALL_LINEAR = 0.12;
-        double WALL_ANGULAR = 0.5;
-        double STATIONARY = 0.0;
-        double RIGHT_ANGULAR = -0.9; //prev -2.9
-        double OVERALL_LIMIT = 0.17;
-        double DIST_LIMIT_1 = 0.003;
-        double DIST_LIMIT_2 = 0.03;
-        double FOLLOW_LINEAR = 0.1; //prev 1.5
-        double FOLLOW_ANGULAR = 0.7; //prev 1.5
+        double PROXIMITY        = 0.4; // prev 0.2
+        double WALL_LINEAR      = 0.12;
+        double WALL_ANGULAR     = 0.5;
+        double STATIONARY       = 0.0;
+        double RIGHT_ANGULAR    = -0.9; //prev -2.9
+        double OVERALL_LIMIT    = 0.17;
+        double DIST_LIMIT_1     = 0.003;
+        double DIST_LIMIT_2     = 0.03;
+        double FOLLOW_LINEAR    = 0.1; //prev 1.5
+        double FOLLOW_ANGULAR   = 0.7; //prev 1.5
 
         int MULTIPLIER_1 = 10;
         int MULTIPLIER_2 = 20;
@@ -79,8 +80,8 @@ class Controller
 
         double MULTIPLIER_LIMIT = 0.7;
 
-        int FLAG_IN_CENTER = 50;
-        int FULL_FLAG = 20000;
+        int FLAG_IN_CENTER  = 50;
+        int FULL_FLAG       = 20000;
 };
 
 

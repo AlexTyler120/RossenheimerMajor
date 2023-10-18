@@ -11,13 +11,6 @@
 #include <nav_msgs/Odometry.h>      // msg for odometer subscriber
 #include <iostream>         
 
-
-// Defines
-
-
-      // degrees to radians constant
-
-
 // indexes for Lidar scan data
 enum
 {

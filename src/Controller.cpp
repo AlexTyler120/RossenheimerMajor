@@ -14,11 +14,6 @@ void Controller::MazeSolver(Sensor* readLidar, Sensor* readOdometer, Motor* read
 
     bool front_wall = readLidar->sensorGetData(CENTER) < PROXIMITY; //there is a wall in front 0.3m away
 
-    // bool FlagFound = readCamera->getGreenPixelsDetected() == true; //there is a flag in the turtlebot camera of the turtlebot
-
-    // int NumGreenPixes = readCamera->getNumGreenPixels(); //get the number of green pixels in the turtlebot camera
-
-    // int FlagPositioning = readCamera->getCentroidOffset(); //get the offset of the flag in the turtlebot camera fro the centre
 
     //get the difference the front left and back left lidar readings to determine paralellism
     long double left_distance = readLidar->sensorGetData(FRONTLEFT) - readLidar->sensorGetData(BACKLEFT);
@@ -32,16 +27,6 @@ void Controller::MazeSolver(Sensor* readLidar, Sensor* readOdometer, Motor* read
     {
       turtlebot3_state_num = TB3_WALL_FOLLOW;
     }
-
-    // else if (NumGreenPixes > FULL_FLAG && (FlagPositioning < FLAG_IN_CENTER || FlagPositioning > -FLAG_IN_CENTER))
-    // {
-    //   turtlebot3_state_num = TB3_STOP; //Flag directly in front stop turtlebot
-    // }
-
-    // else if (FlagFound)
-    // {
-    //   turtlebot3_state_num = TB3_FIND_FLAG; //Flag found so go to flag
-    // }
     else //if there is a wall in front at all make a right turn
     {
       turtlebot3_state_num = TB3_RIGHT_TURN;
@@ -93,16 +78,11 @@ void Controller::findWall(Motor* readMotor)
 void Controller::rightTurn(Sensor* readOdometer, Sensor* readLidar, Motor* readMotor)
 {
     //if the difference between the current pose and the previous pose is greater than the escape range turning done
-   if (fabs(readOdometer->sensorGetData(0) - readOdometer->sensorGetData(1)) >= readLidar->sensorGetData(-1))  
+   if (fabs(readOdometer->sensorGetData(0) - readOdometer->sensorGetData(1)) < readLidar->sensorGetData(-1))  
    {
-    return;
-   } 
-   else
-   {
-    //if the difference is less than the escape range keep turning right
     readMotor->updateCommandVelocity(STATIONARY, RIGHT_ANGULAR);
-    return;
-   }
+   } 
+   return;
 }
 
 // wallFollow continuously manipulates the angular velocity of the TurtleBot3
@@ -155,23 +135,16 @@ void Controller::approachFlag(Camera* readCamera, Motor* readMotor)
     if (readCamera->getCentroidOffset() < FLAG_IN_CENTER && readCamera->getCentroidOffset() > -FLAG_IN_CENTER)
     {
       readMotor->updateCommandVelocity(OVERALL_LIMIT, STATIONARY);
-      return;
     }
     //if the flag is to the right of the camera turn right
     else if (readCamera->getCentroidOffset() > FLAG_IN_CENTER)
     {
       readMotor->updateCommandVelocity(OVERALL_LIMIT, -FOLLOW_ANGULAR);
-      return;
     }
     //if the flag is to the right of the camera turn right
     else if (readCamera->getCentroidOffset() < -FLAG_IN_CENTER)
     {
       readMotor->updateCommandVelocity(OVERALL_LIMIT, FOLLOW_ANGULAR);
-      return;
-    }
-    else
-    {
-      return;
     }
   return;
 }

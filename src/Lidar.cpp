@@ -34,15 +34,16 @@ void Lidar::sensorCallBack(const sensor_msgs::LaserScan::ConstPtr &msg)
     {
         if (std::isinf(msg->ranges.at(scan_angle[num])))
         {
-        scan_data_[num] = msg->range_max;
+            scan_data_[num] = msg->range_max;
         }
         else
         {
-        scan_data_[num] = msg->ranges.at(scan_angle[num]);
+            scan_data_[num] = msg->ranges.at(scan_angle[num]);
         }
+        
         if (scan_data_[num] == 0) // when open space detects a 0 so change to 2 meter
         {
-        scan_data_[num] = 2;
+            scan_data_[num] = 2;
         }
     }
 }
@@ -64,22 +65,4 @@ void Lidar::sensorSetData(double req)
 {
     return;
 }
-
-
-// bool Lidar::getScanAngle(int index)
-// {
-//     if (scan_data_[index] < 0.2)
-//     {
-//         return true;
-//     }
-//     else
-//     {
-//         return false;
-//     }
-// }
-
-// double Lidar::getEscapeRange()
-// {
-//     return escape_range_;
-// }
 
