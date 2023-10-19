@@ -7,6 +7,8 @@
 #include <sensor_msgs/image_encodings.h>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/aruco.hpp>
 #include <std_msgs/Bool.h>
 #include <std_msgs/Int32.h>
 
@@ -19,25 +21,21 @@ class Camera
 
     void imageCallback(const sensor_msgs::ImageConstPtr& msg);
 
-    bool getGreenPixelsDetected();
-    int getNumGreenPixels();
-    int getCentroidOffset();
+    bool getTagDetected();
+    double getTagOffset();
 
 private:
     image_transport::Subscriber sub_;
 
-    ros::Publisher pub;
-    ros::Publisher green_pixels_detected_pub_;
-    ros::Publisher num_green_pixels_pub_;
-    ros::Publisher centroid_offset_pub_;
+    ros::Publisher pub_;
 
-    bool m_green_pixels_detected;
-    int m_num_green_pixels, m_centroid_offset;
+    double m_tag_offset = 0.0;
+    bool m_tag_detected = false;
 };
 
-  const std::string IMAGE_TOPIC = "/camera/image_raw";
+  // const std::string IMAGE_TOPIC = "/camera/image_raw";    // use for hardware
+  const std::string IMAGE_TOPIC = "/camera/image";        // use for simulation
   const std::string PUBLISH_TOPIC = "/image_converter/output_video";
-  const std::string OPENCV_WINDOW = "Image window";
 
 
 #endif // CAMERA_H

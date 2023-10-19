@@ -21,7 +21,7 @@ enum
     TB3_FIND_WALL,
     TB3_RIGHT_TURN,
     TB3_WALL_FOLLOW,
-    TB3_FIND_FLAG,
+    TB3_APRIL_CENTER,
     TB3_STOP
 };
 
@@ -56,8 +56,8 @@ class Controller
         // the left wall
         void wallFollow(double left_distance, Sensor* readLidar, Sensor* readOdometer, Motor* readMotor);
 
-       //ApproachFlag is used to find its destination
-        void approachFlag(Camera* readCamera, Motor* readMotor);
+
+        void centerTag(Camera* readCamera, Motor* readMotor);
   
        //--Private Member Variables--
         uint8_t turtlebot3_state_num;        // variable to store case for algorithm
@@ -80,8 +80,7 @@ class Controller
 
         double MULTIPLIER_LIMIT = 0.7;
 
-        int FLAG_IN_CENTER  = 50;
-        int FULL_FLAG       = 20000;
+        double FLAG_IN_CENTER  = 30.0;
 };
 
 

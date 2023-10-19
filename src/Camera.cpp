@@ -10,119 +10,72 @@ Camera::Camera(ros::NodeHandle& nh_)
   sub_ = it.subscribe(IMAGE_TOPIC, 1, &Camera::imageCallback, this);
 
   // creating a ROS publisher for the output image
-  pub = nh_.advertise<sensor_msgs::Image>(PUBLISH_TOPIC, 1);
-  green_pixels_detected_pub_ = nh_.advertise<std_msgs::Bool>("green_pixels_detected", 1);
-  num_green_pixels_pub_ = nh_.advertise<std_msgs::Int32>("num_green_pixels", 1);
-  centroid_offset_pub_ = nh_.advertise<std_msgs::Int32>("centroid_offset", 1);
+  pub_ = nh_.advertise<sensor_msgs::Image>(PUBLISH_TOPIC, 1);
 
   // create opencv window
-  cv::namedWindow(OPENCV_WINDOW);
+  cv::namedWindow("Detected Markers");
 }
 
 Camera::~Camera()
 {
-  cv::destroyWindow(OPENCV_WINDOW);
+  cv::destroyWindow("Detected Markers");
 }
 
 void Camera::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 {
-  cv_bridge::CvImagePtr cv_ptr;
+  ROS_INFO("Image incoming");
+  cv_bridge::CvImagePtr cvPointer;
 
-  cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
-
-  // convert image from BGR to HSV
-  cv::Mat hsv_image;
-  cv::cvtColor(cv_ptr->image, hsv_image, cv::COLOR_BGR2HSV);
-
-  // setting HSV color range for bright green pixels
-  cv::Scalar lower_green(40, 50, 50);
-  cv::Scalar upper_green(80, 255, 255);
-
-  // thresholding image to only get bright green pixels
-  cv::Mat green_mask;
-  cv::inRange(hsv_image, lower_green, upper_green, green_mask);
-
-  // find centroid of countoured region
-  cv::Moments moments = cv::moments(green_mask, true);
-  cv::Point centroid;
-  if (moments.m00 > 0) 
+  try
   {
-    centroid.x = moments.m10 / moments.m00;
-    centroid.y = moments.m01 / moments.m00;
+      cvPointer = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
+      
   }
-  else 
+
+  catch (cv_bridge::Exception& e)
   {
-    centroid.x = 0;
-    centroid.y = 0;
+      ROS_ERROR("cv_bridge exception: %s", e.what());
+      return;
   }
 
-  // find center of camera image 
-  int image_center_x = green_mask.cols / 2;
+  cv::Ptr<cv::aruco::Dictionary> dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_APRILTAG_36h11);
+  cv::Ptr<cv::aruco::DetectorParameters> parameters = cv::aruco::DetectorParameters::create();
 
-  // calculate offset of bounded box from center of image
-  int centroid_offset_x = centroid.x - image_center_x;
+  std::vector<std::vector<cv::Point2f>> markerCorners, rejectedCandidates;
+  std::vector<int> markerIds;
+  cv::aruco::detectMarkers(cvPointer->image, dictionary, markerCorners, markerIds, parameters, rejectedCandidates);
 
-  m_centroid_offset = centroid_offset_x;
-  std_msgs::Int32 offset_msg;
-  offset_msg.data = centroid_offset_x;
-  centroid_offset_pub_.publish(offset_msg);
+  cv::Mat outputImage = cvPointer->image.clone();
+  cv::aruco::drawDetectedMarkers(outputImage, markerCorners, markerIds);
 
-  // finding counters of region
-  std::vector<std::vector<cv::Point>> contours;
-  cv::findContours(green_mask, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+  m_tag_detected = false;
 
-  // draw contours on camera image for visulation
-  cv::Mat green_image = cv_ptr->image.clone();
-  int total_green_area = 0;
-  for (size_t i = 0; i < contours.size(); i++) 
+// Calculate the horizontal distance from the center of the detected tag from the center of the camera image
+  if (!markerIds.empty())
   {
-    cv::drawContours(green_image, contours, i, cv::Scalar(0, 255, 0), 2);
-    total_green_area += cv::contourArea(contours[i]);
+    m_tag_detected = true;
+    int markerIndex = 0; // Use the first detected marker
+    cv::Moments moments = cv::moments(markerCorners[markerIndex]);
+    double cx = moments.m10 / moments.m00;
+    int imageWidth = cvPointer->image.cols;
+    int centerX = imageWidth / 2;
+    double dx = cx - centerX;
+    m_tag_offset = dx;
+    ROS_INFO("Horizontal distance from center: %f", dx);
   }
 
-  // checking if a threshold number of green pixels were detected
-  int image_area = green_mask.rows * green_mask.cols;
-  if (total_green_area >= image_area / 1000) {
-    ROS_INFO("Green pixels detected!");
-    m_green_pixels_detected = true;
-    std_msgs::Bool flag;
-    flag.data = true;
-    green_pixels_detected_pub_.publish(flag);
-  }
-  else {
-    ROS_INFO("No green pixels detected.");
-    m_green_pixels_detected = false;
-    std_msgs::Bool flag;
-    flag.data = false;
-    green_pixels_detected_pub_.publish(flag);
-  }
-  
-  // publishing number of green pixels detected
-  m_num_green_pixels = total_green_area;
-  std_msgs::Int32 num_green_pixels;
-  num_green_pixels.data = total_green_area;
-  num_green_pixels_pub_.publish(num_green_pixels);
+  ROS_INFO("Tag detected: %d", m_tag_detected);
 
-  // publishing processed image
-  pub.publish(cv_bridge::CvImage(std_msgs::Header(), "bgr8", green_image).toImageMsg());
-
-  // update opencv window
-  cv::imshow(OPENCV_WINDOW, green_image);
-  cv::waitKey(3);
+  cv::imshow("Detected Markers", outputImage);
+  cv::waitKey(1);
 }
 
-// getter implementations
-bool Camera::getGreenPixelsDetected()
+bool Camera::getTagDetected()
 {
-  return m_green_pixels_detected;
+    return m_tag_detected;
 }
 
-int Camera::getNumGreenPixels()
+double Camera::getTagOffset()
 {
-  return m_num_green_pixels;
-}
-
-int Camera::getCentroidOffset()
-{
-  return m_centroid_offset;
+    return m_tag_offset;
 }

@@ -14,12 +14,20 @@ void Controller::MazeSolver(Sensor* readLidar, Sensor* readOdometer, Motor* read
 
     bool front_wall = readLidar->sensorGetData(CENTER) < PROXIMITY; //there is a wall in front 0.3m away
 
-
     //get the difference the front left and back left lidar readings to determine paralellism
     long double left_distance = readLidar->sensorGetData(FRONTLEFT) - readLidar->sensorGetData(BACKLEFT);
 
+    bool tag_detected = readCamera->getTagDetected(); // reading in if a tag is detected
 
-    if (!left_wall && !front_wall) //no walls are seen so go forward and left slightly looking for one
+    // reading in distance from april tag to center of camera
+    double tag_offset = readCamera->getTagOffset();
+
+
+    if (tag_detected)
+    {
+      turtlebot3_state_num = TB3_APRIL_CENTER;
+    }
+    else if (!left_wall && !front_wall) //no walls are seen so go forward and left slightly looking for one
     {
       turtlebot3_state_num = TB3_FIND_WALL;
     }
@@ -52,9 +60,9 @@ void Controller::MazeSolver(Sensor* readLidar, Sensor* readOdometer, Motor* read
         wallFollow(left_distance, readLidar, readOdometer, readMotor);
         break;
 
-      case TB3_FIND_FLAG:
-        std::cout << "FINDING FLAG" << std::endl;
-        approachFlag(readCamera, readMotor);
+      case TB3_APRIL_CENTER:
+        std::cout << "CENTERING" << std::endl;
+        centerTag(readCamera, readMotor);
         break;
 
       case TB3_STOP:
@@ -128,21 +136,22 @@ void Controller::wallFollow(double left_distance, Sensor* readLidar, Sensor* rea
     return;
 }
 
-//Used to find the ending flag signifying end of maze
-void Controller::approachFlag(Camera* readCamera, Motor* readMotor)
+
+void Controller::centerTag(Camera* readCamera, Motor* readMotor)
 {
     //if the flag is in the centre of the camera approach
-    if (readCamera->getCentroidOffset() < FLAG_IN_CENTER && readCamera->getCentroidOffset() > -FLAG_IN_CENTER)
+    if ((readCamera->getTagOffset() < FLAG_IN_CENTER) && (readCamera->getTagOffset() > -FLAG_IN_CENTER))
     {
       readMotor->updateCommandVelocity(OVERALL_LIMIT, STATIONARY);
+      ROS_INFO("Tag in center");
     }
     //if the flag is to the right of the camera turn right
-    else if (readCamera->getCentroidOffset() > FLAG_IN_CENTER)
+    else if (readCamera->getTagOffset() > FLAG_IN_CENTER)
     {
       readMotor->updateCommandVelocity(OVERALL_LIMIT, -FOLLOW_ANGULAR);
     }
     //if the flag is to the right of the camera turn right
-    else if (readCamera->getCentroidOffset() < -FLAG_IN_CENTER)
+    else if (readCamera->getTagOffset() < -FLAG_IN_CENTER)
     {
       readMotor->updateCommandVelocity(OVERALL_LIMIT, FOLLOW_ANGULAR);
     }
