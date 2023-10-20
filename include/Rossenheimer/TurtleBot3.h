@@ -10,7 +10,7 @@
 #include <geometry_msgs/Point.h>
 
 // include necessary header files
-#include "Sensor.h"
+#include "Sensors/Sensor.h"
 #include "Motor.h"
 #include "Controller.h"
 #include "Camera.h"

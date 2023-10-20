@@ -8,9 +8,9 @@
 
 
 // Include all necessary header files
-#include "Sensor.h"
-#include "Lidar.h"
-#include "Odometer.h"
+#include "Sensors/Sensor.h"
+#include "Sensors/Lidar.h"
+#include "Sensors/Odometer.h"
 #include "Motor.h"
 #include "Camera.h"
 
@@ -57,7 +57,7 @@ class Controller
         void wallFollow(double left_distance, Sensor* readLidar, Sensor* readOdometer, Motor* readMotor);
 
 
-        void centerTag(Camera* readCamera, Motor* readMotor);
+        void centerTag(Camera* readCamera, Motor* readMotor, Sensor* readLidar);
   
        //--Private Member Variables--
         uint8_t turtlebot3_state_num;        // variable to store case for algorithm

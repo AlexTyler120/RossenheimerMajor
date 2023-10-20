@@ -42,6 +42,7 @@ void Camera::imageCallback(const sensor_msgs::ImageConstPtr& msg)
   cv::Ptr<cv::aruco::DetectorParameters> parameters = cv::aruco::DetectorParameters::create();
 
   std::vector<std::vector<cv::Point2f>> markerCorners, rejectedCandidates;
+  
   std::vector<int> markerIds;
   cv::aruco::detectMarkers(cvPointer->image, dictionary, markerCorners, markerIds, parameters, rejectedCandidates);
 

@@ -31,6 +31,7 @@ private:
 
     double m_tag_offset = 0.0;
     bool m_tag_detected = false;
+    double m_dist_from_tag;
 };
 
   // const std::string IMAGE_TOPIC = "/camera/image_raw";    // use for hardware

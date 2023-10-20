@@ -1,7 +1,6 @@
 #include <ros/ros.h>
 
 #include "../include/Rossenheimer/Controller.h"
-#include "../include/Rossenheimer/Sensor.h"
 
 //-- Maze Solver Function --//
 // This function will check if there is a wall to the left or infront and will take action accordingly
@@ -62,7 +61,7 @@ void Controller::MazeSolver(Sensor* readLidar, Sensor* readOdometer, Motor* read
 
       case TB3_APRIL_CENTER:
         std::cout << "CENTERING" << std::endl;
-        centerTag(readCamera, readMotor);
+        centerTag(readCamera, readMotor, readLidar);
         break;
 
       case TB3_STOP:
@@ -137,13 +136,40 @@ void Controller::wallFollow(double left_distance, Sensor* readLidar, Sensor* rea
 }
 
 
-void Controller::centerTag(Camera* readCamera, Motor* readMotor)
+void Controller::centerTag(Camera* readCamera, Motor* readMotor, Sensor* readLidar)
 {
     //if the flag is in the centre of the camera approach
     if ((readCamera->getTagOffset() < FLAG_IN_CENTER) && (readCamera->getTagOffset() > -FLAG_IN_CENTER))
     {
       readMotor->updateCommandVelocity(OVERALL_LIMIT, STATIONARY);
-      ROS_INFO("Tag in center");
+      if ((readCamera->getTagOffset() < 15.0) && (readCamera->getTagOffset() > -15.0))
+      {
+        ROS_INFO("Tag in center");
+        double tag_dist = readLidar->sensorGetData(CENTER);
+        if (tag_dist < 1.0)
+        {
+          readMotor->updateCommandVelocity(0.0, 0.0);
+          ROS_INFO("Stopped with tag distance: %f", tag_dist);
+        }
+        else if (readCamera->getTagOffset() > 15)
+        {
+          readMotor->updateCommandVelocity(OVERALL_LIMIT, -FOLLOW_ANGULAR);
+        }
+        //if the flag is to the right of the camera turn right
+        else if (readCamera->getTagOffset() < -15)
+        {
+          readMotor->updateCommandVelocity(OVERALL_LIMIT, FOLLOW_ANGULAR);
+        }
+      }
+      else if (readCamera->getTagOffset() > FLAG_IN_CENTER)
+      {
+        readMotor->updateCommandVelocity(OVERALL_LIMIT, -FOLLOW_ANGULAR);
+      }
+      //if the flag is to the right of the camera turn right
+      else if (readCamera->getTagOffset() < -FLAG_IN_CENTER)
+      {
+        readMotor->updateCommandVelocity(OVERALL_LIMIT, FOLLOW_ANGULAR);
+      }
     }
     //if the flag is to the right of the camera turn right
     else if (readCamera->getTagOffset() > FLAG_IN_CENTER)
