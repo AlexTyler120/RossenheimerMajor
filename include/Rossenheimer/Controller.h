@@ -13,6 +13,7 @@
 #include "Sensors/Odometer.h"
 #include "Motor.h"
 #include "Camera.h"
+#include "Navigator.h"
 
 
 // enum:case structure for
@@ -35,52 +36,59 @@ class Controller
 {
   
    public:
-       //--Functionality--
-       void MazeSolver(Sensor* readLidar, Sensor* readOdometer, Motor* readMotor, Camera* readCamera);
+    //--Constructor--
+    Controller(); // default constructor
+
+    //--Destructor--
+    ~Controller(); // default destructor
+    //--Functionality--
+    void MazeSolver(Sensor* readLidar, Sensor* readOdometer, Motor* readMotor, Camera* readCamera);
       
 
 
    private:
-        //--Functionality--
-        
-        // findWall sets the TurtleBot3 on an arc trajectory leftward until a wall is found
-        void findWall(Motor* readMotor);
+    //--Functionality--
+    
+    // findWall sets the TurtleBot3 on an arc trajectory leftward until a wall is found
+    void findWall(Motor* readMotor);
 
 
-        // rightTurn turns the TurtleBot3 right until its pose is parallel to the left wall
-        void rightTurn(Sensor* readOdometer, Sensor* readLidar, Motor* readMotor);
+    // rightTurn turns the TurtleBot3 right until its pose is parallel to the left wall
+    void rightTurn(Sensor* readOdometer, Sensor* readLidar, Motor* readMotor);
 
 
-        // wallFollow continuously manipulates the angular velocity of the TurtleBot3
-        // to maintain the desired distance from the left wall, and direction parallel to
-        // the left wall
-        void wallFollow(double left_distance, Sensor* readLidar, Sensor* readOdometer, Motor* readMotor);
+    // wallFollow continuously manipulates the angular velocity of the TurtleBot3
+    // to maintain the desired distance from the left wall, and direction parallel to
+    // the left wall
+    void wallFollow(double left_distance, Sensor* readLidar, Sensor* readOdometer, Motor* readMotor);
 
 
-        void centerTag(Camera* readCamera, Motor* readMotor, Sensor* readLidar);
-  
-       //--Private Member Variables--
-        uint8_t turtlebot3_state_num;        // variable to store case for algorithm
+    void centerTag(Camera* readCamera, Motor* readMotor, Sensor* readLidar);
 
-       //--Constant Definitions--
-        double PROXIMITY        = 0.4; // prev 0.2
-        double WALL_LINEAR      = 0.12;
-        double WALL_ANGULAR     = 0.5;
-        double STATIONARY       = 0.0;
-        double RIGHT_ANGULAR    = -0.9; //prev -2.9
-        double OVERALL_LIMIT    = 0.17;
-        double DIST_LIMIT_1     = 0.003;
-        double DIST_LIMIT_2     = 0.03;
-        double FOLLOW_LINEAR    = 0.1; //prev 1.5
-        double FOLLOW_ANGULAR   = 0.7; //prev 1.5
+    Navigator* _Navigator; // controller has a navigator
 
-        int MULTIPLIER_1 = 10;
-        int MULTIPLIER_2 = 20;
-        int MULTIPLIER_3 = 30;
+    //--Private Member Variables--
+    uint8_t turtlebot3_state_num;        // variable to store case for algorithm
 
-        double MULTIPLIER_LIMIT = 0.7;
+    //--Constant Definitions--
+    double PROXIMITY        = 0.4; // prev 0.2
+    double WALL_LINEAR      = 0.12;
+    double WALL_ANGULAR     = 0.5;
+    double STATIONARY       = 0.0;
+    double RIGHT_ANGULAR    = -0.9; //prev -2.9
+    double OVERALL_LIMIT    = 0.17;
+    double DIST_LIMIT_1     = 0.003;
+    double DIST_LIMIT_2     = 0.03;
+    double FOLLOW_LINEAR    = 0.1; //prev 1.5
+    double FOLLOW_ANGULAR   = 0.7; //prev 1.5
 
-        double FLAG_IN_CENTER  = 30.0;
+    int MULTIPLIER_1 = 10;
+    int MULTIPLIER_2 = 20;
+    int MULTIPLIER_3 = 30;
+
+    double MULTIPLIER_LIMIT = 0.7;
+
+    double FLAG_IN_CENTER  = 30.0;
 };
 
 

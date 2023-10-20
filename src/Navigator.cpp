@@ -24,7 +24,7 @@ Navigator::~Navigator()
 }
 
 void Navigator::SetGoal(double x, double y, double pose, int goalType)
-{    
+{    //what is the flag
     if (goalType == 0)
     {
         GoalBased* BaseGoal = new GoalBased(x, y, pose);

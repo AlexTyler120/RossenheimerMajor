@@ -2,6 +2,19 @@
 
 #include "Rossenheimer/Controller.h"
 
+Controller::Controller()
+{
+    ROS_INFO("[CTor]: Controller");
+    _Navigator = new Navigator();
+    _Navigator->SetGoal(0.0, 0.0, 0.0, 0); //initiate the starting position as the base to get resources from
+                                           //at point 0,0,0 pose 0, and type 0 which is base goal. will return here when needed
+}
+
+Controller::~Controller()
+{
+    ROS_INFO("[DTor]: Controller");
+}
+
 //-- Maze Solver Function --//
 // This function will check if there is a wall to the left or infront and will take action accordingly
 void Controller::MazeSolver(Sensor* readLidar, Sensor* readOdometer, Motor* readMotor, Camera* readCamera)
@@ -165,7 +178,7 @@ void Controller::centerTag(Camera* readCamera, Motor* readMotor, Sensor* readLid
       {
         readMotor->updateCommandVelocity(OVERALL_LIMIT, -FOLLOW_ANGULAR);
       }
-      //if the flag is to the right of the camera turn right
+      //if the flag is to the left of the camera turn left
       else if (readCamera->getTagOffset() < -FLAG_IN_CENTER)
       {
         readMotor->updateCommandVelocity(OVERALL_LIMIT, FOLLOW_ANGULAR);
@@ -176,7 +189,7 @@ void Controller::centerTag(Camera* readCamera, Motor* readMotor, Sensor* readLid
     {
       readMotor->updateCommandVelocity(OVERALL_LIMIT, -FOLLOW_ANGULAR);
     }
-    //if the flag is to the right of the camera turn right
+    //if the flag is to the left of the camera turn left
     else if (readCamera->getTagOffset() < -FLAG_IN_CENTER)
     {
       readMotor->updateCommandVelocity(OVERALL_LIMIT, FOLLOW_ANGULAR);
