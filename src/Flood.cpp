@@ -1,6 +1,6 @@
 #include <ros/ros.h>
 
-#include "../include/Rossenheimer/Goal/GoalFlood.h"
+#include "Rossenheimer/Goal/GoalFlood.h"
 
 GoalFlood::GoalFlood(double coord_x, double coord_y, double orientation)
 {

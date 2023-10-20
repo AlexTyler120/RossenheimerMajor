@@ -1,5 +1,5 @@
 #include <ros/ros.h>
-#include "../include/Rossenheimer/Goal/Goal.h"
+#include "Rossenheimer/Goal/Goal.h"
 
 Goal::Goal(){
     ROS_INFO("OH SHIT GOAL CREATED OH NO.");    

@@ -1,6 +1,6 @@
 #include <ros/ros.h>
 
-#include "../include/Rossenheimer/Goal/GoalFire.h"
+#include "Rossenheimer/Goal/GoalFire.h"
 
 GoalFire::GoalFire(double coord_x, double coord_y, double orientation)
 {

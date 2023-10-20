@@ -1,17 +1,18 @@
 #include <ros/ros.h>
 
-#include "../include/Rossenheimer/Goal/GoalBased.h"
+#include "Rossenheimer/Goal/GoalBased.h"
 
-Base::Base()
+GoalBased::GoalBased()
 {
     ROS_INFO("[CTor]: Based");
 }
 
-Base::~Base(){
+GoalBased::~GoalBased()
+{
     ROS_INFO("[DTor]: So not Based.");
 }
 
-void Base::actionTask()
+void GoalBased::actionTask()
 {
     ROS_INFO("Resupplying rossenheimer");
     status = false;

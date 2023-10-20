@@ -1,4 +1,4 @@
-#include "../include/Rossenheimer/Camera.h"
+#include "Rossenheimer/Camera.h"
 
 
 Camera::Camera() {}

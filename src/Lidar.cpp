@@ -1,8 +1,8 @@
 #include <ros/ros.h>
 
-#include "../include/Rossenheimer/Sensors/Sensor.h"
-#include "../include/Rossenheimer/Sensors/Lidar.h"
-#include "../include/Rossenheimer/Sensors/Odometer.h"
+#include "Rossenheimer/Sensors/Sensor.h"
+#include "Rossenheimer/Sensors/Lidar.h"
+#include "Rossenheimer/Sensors/Odometer.h"
 
 Lidar::Lidar()
 {

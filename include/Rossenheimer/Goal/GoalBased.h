@@ -1,7 +1,7 @@
 #ifndef BASED_H_
 #define BASED_H_
 
-#include "Rossenheimer/Goal/Goal.h"
+#include "Goal.h"
 
 class GoalBased : public Goal
 {

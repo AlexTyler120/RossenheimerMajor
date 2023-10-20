@@ -1,6 +1,6 @@
 #include <ros/ros.h>
 
-#include "../include/Rossenheimer/Controller.h"
+#include "Rossenheimer/Controller.h"
 
 //-- Maze Solver Function --//
 // This function will check if there is a wall to the left or infront and will take action accordingly

@@ -7,11 +7,11 @@
 #include <move_base_msgs/MoveBaseGoal.h>
 #include <actionlib_msgs/GoalStatus.h>
 
-#include "../include/Rossenheimer/Navigator.h"
-#include "../include/Rossenheimer/Goal/Goal.h"
-#include "../include/Rossenheimer/Goal/GoalBased.h"
-#include "../include/Rossenheimer/Goal/GoalFire.h"
-#include "../include/Rossenheimer/Goal/GoalFlood.h"
+#include "Rossenheimer/Navigator.h"
+#include "Rossenheimer/Goal/Goal.h"
+#include "Rossenheimer/Goal/GoalBased.h"
+#include "Rossenheimer/Goal/GoalFire.h"
+#include "Rossenheimer/Goal/GoalFlood.h"
 
 Navigator::Navigator()
 {
