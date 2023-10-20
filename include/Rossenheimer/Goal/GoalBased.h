@@ -3,13 +3,13 @@
 
 #include "Rossenheimer/Goal/Goal.h"
 
-class Base : public Goal
+class GoalBased : public Goal
 {
     public:
-        Base();
-        Base(double coord_x, double coord_y, double orientation);
+        GoalBased();
+        GoalBased(double coord_x, double coord_y, double orientation);
         void actionTask();
-        ~Base();
+        ~GoalBased();
     private:
 };
 

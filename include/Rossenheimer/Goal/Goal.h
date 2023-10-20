@@ -14,14 +14,14 @@ class Goal
     public:
         Goal();
         Goal(double coord_x, double coord_y, double orientation);
-        virtual void actionTask() = 0;
+        virtual void actionTask() = 0; //
         ~Goal();
+        move_base_msgs::MoveBaseGoal goal;
     protected:
         bool status;
         double Target_x;
         double Target_y;
         double Target_Orientation;
-        move_base_msgs::MoveBaseGoal goal;
 };
 
 #endif /* GOAL_H_ */
