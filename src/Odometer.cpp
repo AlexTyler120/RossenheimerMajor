@@ -2,8 +2,8 @@
 #include <ros/ros.h>
 
 // Include class headers
-#include "../include/Rossenheimer/Sensor.h"
-#include "../include/Rossenheimer/Odometer.h"
+#include "../include/Rossenheimer/Sensors/Sensor.h"
+#include "../include/Rossenheimer/Sensors/Odometer.h"
 
 //---Odometer Functionality------------------------------------------------------------
 
