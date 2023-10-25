@@ -2,7 +2,7 @@
 
 #include "../include/Rossenheimer/Goal/GoalBased.h"
 
-GoalBased::GoalBased(double coord_x, double coord_y, double orientation, int type)
+GoalBased::GoalBased(double coord_x, double coord_y, double orientation, int type, int id)
 {
    ROS_INFO("[CTor]: Based");
 }
@@ -14,6 +14,10 @@ GoalBased::~GoalBased()
 
 void GoalBased::actionTask()
 {
-    ROS_INFO("Resupplying rossenheimer");
-    status = false;
+    
 }
+// void GoalBased::actionTask(TurtleBot3* bot)
+// {
+//     ROS_INFO("Resupplying rossenheimer");
+    
+// }

@@ -46,10 +46,19 @@ TurtleBot3::~TurtleBot3()
     delete _camera;         // free memory from Camera
 }
 
+
+void TurtleBot3::updateTank(int* depot_array)
+{
+    sandbag_payload = depot_array[0];
+    spray_payload = depot_array[1];
+
+    ROS_INFO("Resupplying TB3: %d sandbags, %d spray", sandbag_payload, spray_payload);
+}
+
 //--TurtleBot3 solveMaze Implementation------------------------------
 // Loop for ros to read data and determine appropriate manoeuvre
 // Call algorithm from controller of TurtleBot3
-bool TurtleBot3::solveMaze()
+bool TurtleBot3::solveMaze(TurtleBot3* bot)
 {
     _controller->frontierDetection(_camera,TurtleBotSensors[LIDAR_INDEX], TurtleBotSensors[ODOMETER_INDEX]);
 
@@ -58,6 +67,8 @@ bool TurtleBot3::solveMaze()
     {
         // pass lidar, odometer and motor pointers into the algorithm of controller
         _controller->MazeSolver(TurtleBotSensors[0], TurtleBotSensors[1], _motor, _camera);
+
+        updateTank(_controller->getDepots());
 
         addPathPoint();
         marker_pub.publish(path_marker);

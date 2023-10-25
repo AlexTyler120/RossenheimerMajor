@@ -41,6 +41,10 @@ Goal::~Goal(){
     ROS_INFO("OH SHIT GOAL DESTROYED OH YEAH.");
 }
 
+int Goal::GetType()
+{
+    return Target_type;
+}
 void Goal::actionTask(){
 
 }

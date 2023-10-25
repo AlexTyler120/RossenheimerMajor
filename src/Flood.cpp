@@ -2,7 +2,7 @@
 
 #include "../include/Rossenheimer/Goal/GoalFlood.h"
 
-GoalFlood::GoalFlood(double coord_x, double coord_y, double orientation, int type)
+GoalFlood::GoalFlood(double coord_x, double coord_y, double orientation, int type, int id)
 {
     ROS_INFO("[CTor]: Flood created.");
 }

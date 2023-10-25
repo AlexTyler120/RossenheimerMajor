@@ -7,7 +7,7 @@
 class GoalFire : public Goal
 {
     public:
-        GoalFire(double coord_x, double coord_y, double orientation, int type);
+        GoalFire(double coord_x, double coord_y, double orientation, int type, int id);
         void actionTask();
         ~GoalFire();
     private:

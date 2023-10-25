@@ -1,8 +1,9 @@
 #ifndef GOAL_H_
 #define GOAL_H_
 
-#include <ros/ros.h>
 #include "../Sensors/Sensor.h" 
+
+#include <ros/ros.h>
 #include <geometry_msgs/Point.h>
 #include <actionlib/client/simple_action_client.h>
 #include <move_base_msgs/MoveBaseAction.h>

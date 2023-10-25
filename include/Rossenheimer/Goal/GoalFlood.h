@@ -7,7 +7,7 @@
 class GoalFlood : public Goal
 {
     public:
-        GoalFlood(double coord_x, double coord_y, double orientation, int type);
+        GoalFlood(double coord_x, double coord_y, double orientation, int type, int id);
         void actionTask();
         ~GoalFlood();
     private:

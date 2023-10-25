@@ -19,6 +19,7 @@
 #include <cmath>
 
 
+
 // enum:case structure for
 enum
 {   GET_TB3_DIRECTION = 0,
@@ -54,9 +55,13 @@ class Controller
     
     void frontierDetection(Camera* readCamera, Sensor* readLidar, Sensor* readOdometer);
 
+    int* getDepots();
+
    private:
     //--Functionality--
     
+    
+
     // findWall sets the TurtleBot3 on an arc trajectory leftward until a wall is found
     void findWall(Motor* readMotor);
 
@@ -109,6 +114,7 @@ class Controller
     double prev_y;
     double prev_pose;
 
+    int* depot;
     int count;
 };
 

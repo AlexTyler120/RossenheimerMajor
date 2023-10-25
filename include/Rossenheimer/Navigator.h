@@ -7,15 +7,24 @@
 #include <move_base_msgs/MoveBaseAction.h>
 #include <move_base_msgs/MoveBaseGoal.h>
 #include <actionlib_msgs/GoalStatus.h>
+
 #include "Sensors/Sensor.h"
 #include "Goal/Goal.h"
 #include "Goal/GoalBased.h"
 #include "Goal/GoalFire.h"
 #include "Goal/GoalFlood.h"
+
 #include <vector>
 #include <array>
 #include <iostream>
 #include <cmath>
+
+enum
+{
+    PRIORITY0 = 0,
+    PRIORITY1,
+    PRIORITY2
+};
 
 class Navigator {
     public:
@@ -29,8 +38,11 @@ class Navigator {
         
         void SetBase(double x, double y, double orientation);
         Goal* GetBase();
+        std::vector<Goal*> GetAddress();
+        int* algorithm();
 
     private:
+        
         
         
         static const int numPriorities = 3;
@@ -38,8 +50,11 @@ class Navigator {
         // std::vector<std::pair< Goal *, int>> Goals;
 
         std::set< std::pair<int, std::pair<std::pair<double, double>, double>>> _ids_pos;
-        std::array< std::set <Goal *>, numPriorities> _priorityBook;
-        GoalBased* BaseGoal;
+        std::array< std::vector <Goal *>, numPriorities> _priorityBook;
+        std::vector < Goal * > objectives;
+        Goal* BaseGoal;
+
+        int addresses[3] = {0, 0, 0};
 
         /* 
             array = 

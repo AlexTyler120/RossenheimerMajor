@@ -46,8 +46,8 @@ void Controller::frontierDetection(Camera* readCamera, Sensor* readLidar, Sensor
       current_pose = readOdometer->sensorGetData(1);
     }
 
-
-    if ((current_x == prev_x) && (current_y == prev_y) && (current_pose == prev_pose))
+// (((current_x < (prev_x+0.05)) && (current_x > (prev_x-0.05))) && ((current_y < (prev_y+0.05)) && (current_y > (prev_y-0.05))) )
+    if ((current_x == prev_x) && (current_y == prev_y))
     {
       return;
     }
@@ -108,10 +108,18 @@ void Controller::SaveWorld(Sensor* readLidar, Sensor* readOdometer, Motor* readM
   {
     case TB3_MOVE_BASE:
       _Navigator->MoveToGoal(_Navigator->GetBase());
-      //FindPath();
+      depot = _Navigator->algorithm();
+      turtlebot3_state_num = TB3_MOVE_GOAL;
       break;
 
     case TB3_MOVE_GOAL:
+      while (_Navigator->GetAddress().size() > 0)
+      {
+        _Navigator->MoveToGoal(_Navigator->GetAddress().front());
+        _Navigator->GetAddress().front()->actionTask();
+        _Navigator->GetAddress().erase(_Navigator->GetAddress().begin());
+      }
+      turtlebot3_state_num = TB3_MOVE_BASE;
       break;
   }
 }
@@ -293,7 +301,10 @@ void Controller::wallFollow(double left_distance, Sensor* readLidar, Sensor* rea
     return;
 }
 
-
+int* Controller::getDepots()
+{
+  return depot;
+}
 void Controller::centerTag(Camera* readCamera, Motor* readMotor, Sensor* readLidar)
 {
     //if the flag is in the centre of the camera approach
