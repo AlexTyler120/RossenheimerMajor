@@ -8,10 +8,6 @@ Controller::Controller()
     _Navigator = new Navigator();
     // Sensor* InitPose;
     _Navigator->SetGoal(0.011736, 0.000749, -0.014901,0);
-    // _Navigator->SetGoal(InitPose->sensorGetData(2), InitPose->sensorGetData(3), InitPose->sensorGetData(1), 0); //initiate the starting position as the base to get resources from
-    //                                        //at point 0,0,0 pose 0, and type 0 which is base goal. will return here when needed
-    // ROS_INFO("Goal set to: %f, %f, %f", InitPose->sensorGetData(2), InitPose->sensorGetData(3), InitPose->sensorGetData(1));
-    
 }
 
 Controller::~Controller()
@@ -24,8 +20,8 @@ Controller::~Controller()
 // This function will check if there is a wall to the left or infront and will take action accordingly
 void Controller::MazeSolver(Sensor* readLidar, Sensor* readOdometer, Motor* readMotor, Camera* readCamera)
 {
-    std::cout << "TESTING MAZE SOLVER" << std::endl;
-    ROS_INFO("%f, %f, %f ", readOdometer->sensorGetData(2), readOdometer->sensorGetData(3), readOdometer->sensorGetData(1));
+    // std::cout << "TESTING MAZE SOLVER" << std::endl;
+    // ROS_INFO("%f, %f, %f ", readOdometer->sensorGetData(2), readOdometer->sensorGetData(3), readOdometer->sensorGetData(1));
     turtlebot3_state_num = GET_TB3_DIRECTION;
 
     bool left_wall = readLidar->sensorGetData(LEFT) < PROXIMITY; //there is a wall to the left 0.3m away
@@ -48,7 +44,7 @@ void Controller::MazeSolver(Sensor* readLidar, Sensor* readOdometer, Motor* read
     else if (!left_wall && !front_wall) //no walls are seen so go forward and left slightly looking for one
     {
       //quick test to move to init goal
-      ROS_INFO("Moving to goal");
+      // ROS_INFO("Moving to goal");
       // _Navigator->MoveToGoal(0);
       // ROS_INFO("Moved to goal");
       //turtlebot3_state_num = TB3_FIND_WALL;
