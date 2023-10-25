@@ -2,17 +2,9 @@
 
 #include "../include/Rossenheimer/Goal/GoalFlood.h"
 
-GoalFlood::GoalFlood(double coord_x, double coord_y, double orientation)
+GoalFlood::GoalFlood(double coord_x, double coord_y, double orientation, int type)
 {
-    ROS_INFO("Goal Created");
-    status = true;
-  
-    goal.target_pose.header.frame_id = "map";
-    goal.target_pose.header.stamp = ros::Time::now();
-    
-    goal.target_pose.pose.position.x = coord_x;
-    goal.target_pose.pose.position.y = coord_y;
-    goal.target_pose.pose.orientation.w = orientation;
+    ROS_INFO("[CTor]: Flood created.");
 }
 
 GoalFlood::~GoalFlood()

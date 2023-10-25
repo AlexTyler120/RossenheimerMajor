@@ -17,7 +17,7 @@
 
 Navigator::Navigator()
 {
-    GoalNum = 0;
+    // GoalNum = 0;
     ROS_INFO("Navigation object created");
 }
 Navigator::~Navigator()
@@ -25,29 +25,39 @@ Navigator::~Navigator()
     ROS_INFO("Navigation object destroyed");
 }
 
-void Navigator::SetGoal(double x, double y, double pose, int goalType)
-{    //what is the flag
-    if (goalType == 0)
-    {
-        BaseGoal = new GoalBased(x, y, pose);
-        Goals.push_back(std::make_pair(BaseGoal, GoalNum));
-    }
-    else if (goalType == 1) //Fire
-    {
-        FireGoal = new GoalFire(x, y, pose);
-        Goals.push_back(std::make_pair(FireGoal, GoalNum));
-    }
-    else if (goalType == 2) //Flood
-    {
-        FloodGoal = new GoalFlood(x, y, pose);
-        Goals.push_back(std::make_pair(FloodGoal, GoalNum));
-    }
-    else
-    {
-        ROS_INFO("Invalid goal type");
-    }
-    GoalNum += 1;
+// void Navigator::SetGoal(double x, double y, double pose, int goalType)
+// {    //what is the flag
+//     if (goalType == 0)
+//     {
+//         BaseGoal = new GoalBased(x, y, pose);
+//         Goals.push_back(std::make_pair(BaseGoal, GoalNum));
+//     }
+//     else if (goalType == 1) //Fire
+//     {
+//         FireGoal = new GoalFire(x, y, pose);
+//         Goals.push_back(std::make_pair(FireGoal, GoalNum));
+//     }
+//     else if (goalType == 2) //Flood
+//     {
+//         FloodGoal = new GoalFlood(x, y, pose);
+//         Goals.push_back(std::make_pair(FloodGoal, GoalNum));
+//     }
+//     else
+//     {
+//         ROS_INFO("Invalid goal type");
+//     }
+//     GoalNum += 1;
     
+// }
+
+Goal* Navigator::GetBase()
+{
+  return BaseGoal;
+}
+
+void Navigator::SetBase(double x, double y, double orientation)
+{
+  BaseGoal = new GoalBased(x, y, orientation, TYPE_BASE);  
 }
 
 void Navigator::SetGoal(int april_id, double x, double y, double orientation)
@@ -57,8 +67,7 @@ void Navigator::SetGoal(int april_id, double x, double y, double orientation)
 
 void Navigator::SortGoals()
 {
-  // 129
-  // 275
+
   for (auto it: _ids_pos)
   {
     Goal* pGoal;
@@ -68,26 +77,55 @@ void Navigator::SortGoals()
     
     if (temp_id <= 50)
     {
-      // x, y, pose 
-      pGoal = new GoalFire(it.second.first.first, it.second.first.second, it.second.second);
+      pGoal = new GoalFire(it.second.first.first, it.second.first.second, it.second.second, TYPE_FIRE);
     }
 
     else
     {
-      pGoal = new GoalFlood(it.second.first.first, it.second.first.second, it.second.second);
+      pGoal = new GoalFlood(it.second.first.first, it.second.first.second, it.second.second, TYPE_FLOOD);
     }  
 
     _priorityBook[ans].insert(pGoal);      
   }
 }
 
-void Navigator::MoveToGoal(int GoalNum)
-{  
-  for (int i = 0; i < Goals.size(); i++)
-  {
-    if (Goals[i].second == GoalNum) // find specific goal
-    {
-      // Create a MoveBaseClient object
+// void Navigator::MoveToGoal(int GoalNum)
+// {  
+//   for (int i = 0; i < Goals.size(); i++)
+//   {
+//     if (Goals[i].second == GoalNum) // find specific goal
+//     {
+//       // Create a MoveBaseClient object
+//     actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> move_base("move_base", true);
+
+//     // Wait for the action server to come up
+//     while (!move_base.waitForServer(ros::Duration(5.0)))
+//     {
+//       ROS_INFO("Waiting for the move_base action server to come up");
+//     }
+
+//     // Send the goal to move_base
+//     move_base.sendGoal(Goals[i].first->goal); //move to that goal data
+
+//     // Wait for move_base to complete the goal
+//     move_base.waitForResult();
+
+//     // Check if the goal was successful
+//     if (move_base.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+//     {
+//       ROS_INFO("Goal reached!");
+//     }
+//     else
+//     {
+//       ROS_INFO("Failed to reach goal");
+//     }
+//     }
+//   }
+
+// }
+
+void Navigator::MoveToGoal(Goal* mvGoal)
+{
     actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> move_base("move_base", true);
 
     // Wait for the action server to come up
@@ -97,7 +135,7 @@ void Navigator::MoveToGoal(int GoalNum)
     }
 
     // Send the goal to move_base
-    move_base.sendGoal(Goals[i].first->goal); //move to that goal data
+    move_base.sendGoal(mvGoal->goal); //move to that goal data
 
     // Wait for move_base to complete the goal
     move_base.waitForResult();
@@ -111,7 +149,9 @@ void Navigator::MoveToGoal(int GoalNum)
     {
       ROS_INFO("Failed to reach goal");
     }
-    }
-  }
 
+    // if (mvGoal == type(GoalBased))
+    {
+      // figureOutPath
+    }
 }

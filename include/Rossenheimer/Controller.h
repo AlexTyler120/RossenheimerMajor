@@ -43,7 +43,7 @@ class Controller
   
    public:
     //--Constructor--
-    Controller(); // default constructor
+    Controller(Sensor* readOdometer); // default constructor
 
     //--Destructor--
     ~Controller(); // default destructor
@@ -72,12 +72,6 @@ class Controller
 
 
     void centerTag(Camera* readCamera, Motor* readMotor, Sensor* readLidar);
-
-    
-
-    void moveBase();
-
-    void moveGoal();
 
     Navigator* _Navigator; // controller has a navigator
 

@@ -2,12 +2,15 @@
 
 #include "../include/Rossenheimer/Controller.h"
 
-Controller::Controller()
+Controller::Controller(Sensor* readOdometer)
 {
     ROS_INFO("[CTor]: Controller");
     _Navigator = new Navigator();
     // Sensor* InitPose;
-    _Navigator->SetGoal(0.011736, 0.000749, -0.014901,0);
+    int base_april = 0;
+
+    _Navigator->SetBase(readOdometer->sensorGetData(2), readOdometer->sensorGetData(3), readOdometer->sensorGetData(1));
+    
     count = 0;
     turtlebot3_state_num = TB3_MOVE_BASE;
 }
@@ -98,31 +101,18 @@ void Controller::frontierDetection(Camera* readCamera, Sensor* readLidar, Sensor
   }
 }
 
-void Controller::moveBase()
-{
-  // go through data structure
-  // determine path to fix lowest priority fires./floods first
-  // plan a route to fix them
-  // move Goal
-  
-}
-
-void Controller::moveGoal()
-{
-  // extigniusih/ block 
-  // move base
-}
 
 void Controller::SaveWorld(Sensor* readLidar, Sensor* readOdometer, Motor* readMotor, Camera* readCamera)
 {
-
   switch(turtlebot3_state_num)
   {
     case TB3_MOVE_BASE:
-      moveBase();
+      _Navigator->MoveToGoal(_Navigator->GetBase());
+      //FindPath();
+      break;
 
     case TB3_MOVE_GOAL:
-      moveGoal();
+      break;
   }
 }
 

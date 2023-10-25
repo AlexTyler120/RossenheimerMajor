@@ -21,35 +21,53 @@ class Navigator {
     public:
         Navigator();
         ~Navigator();
-        void MoveToGoal(int GoalNum);
+        // void MoveToGoal(int GoalNum);
+        void MoveToGoal(Goal* mvGoal);
         void SetGoal(double x, double y, double pose, int goalType);  
         void SetGoal(int april_id, double x, double y, double orientation);
         void SortGoals();
+        
+        void SetBase(double x, double y, double orientation);
+        Goal* GetBase();
+
     private:
+        
+        
         static const int numPriorities = 3;
 
-        std::vector<std::pair< Goal *, int>> Goals;
+        // std::vector<std::pair< Goal *, int>> Goals;
 
         std::set< std::pair<int, std::pair<std::pair<double, double>, double>>> _ids_pos;
         std::array< std::set <Goal *>, numPriorities> _priorityBook;
+        GoalBased* BaseGoal;
+
         /* 
             array = 
-            priority 0: {}
-            priority 1: {}
-            priority 2: {}
+            priority 0: {closest Goal*, 2nd closest, ..., furthest} - requires 3 items to put out
+            priority 1: {Fire }      requires 2 items to put out
+            priority 2: {Flood, Fire, Flood, Flood }      requires 1 item
         */
+
+       /* 
+            TB3 has capacity of 3 items (fire_item, flood_item)
+            1st: fix all prio0s
+            2nd: fix Fire (p1) and Flood (p2)
+            3rd: 1 fire, 2flood items: (put out remainder of prio2s)
+
+       */ 
 
        // 0 - 50 : Priority 0 Fire
        // 51 - 99 : Priority 0 Flood
+
        // 100 - 150 : Priority 1 Fire
        // 151 - 199 : Priority 1 Flood
+
        // 200 - 250: Priority 2 Fire
        // 251 - 299: Priority 2 Flood
-
-        int GoalNum;
-        GoalBased* BaseGoal;
-        GoalFire* FireGoal;
-        GoalFlood* FloodGoal;
+    
+        // int GoalNum;
+        // GoalFire* FireGoal;
+        // GoalFlood* FloodGoal;
 };
 
 #endif

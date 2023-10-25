@@ -17,7 +17,7 @@ TurtleBot3::TurtleBot3(ros::NodeHandle &nh_)
     TurtleBotSensors[ODOMETER_INDEX] = new Odometer(&nh_);
 
     _motor = new Motor(&nh_);           // construct Motor
-    _controller = new Controller();     // construct Controller
+    _controller = new Controller(TurtleBotSensors[ODOMETER_INDEX]);     // construct Controller
     _camera = new Camera(nh_);        // construct Camera
 
     //to view in rviz
