@@ -25,13 +25,11 @@ void Controller::frontierDetection(Camera* readCamera, Sensor* readLidar, Sensor
 {
   while (count > -1)
   {
-    count++;
-
     double current_x;
     double current_y;
     double current_pose;
 
-    if (count/(125*40*500) == 1 || count == 1)
+    if (count/(125*40) == 1)
     {
       ROS_INFO("5s elapsed: setting previous.");
       prev_x = readOdometer->sensorGetData(2);
@@ -39,7 +37,7 @@ void Controller::frontierDetection(Camera* readCamera, Sensor* readLidar, Sensor
       prev_pose = readOdometer->sensorGetData(1);
     }
 
-    else if (count/(125*80*500) == 1)
+    else if (count/(125*80) == 1)
     {
       ROS_INFO("10s elapsed: setting current.");
       count = 0;
@@ -52,7 +50,7 @@ void Controller::frontierDetection(Camera* readCamera, Sensor* readLidar, Sensor
     if ((current_x == prev_x) && (current_y == prev_y))
     {
       ROS_INFO("There's something inside you");
-      //return;
+      return;
     }
     
     else
@@ -108,6 +106,7 @@ void Controller::frontierDetection(Camera* readCamera, Sensor* readLidar, Sensor
         // }
       }
     }
+    count++;
   }
 }
 
