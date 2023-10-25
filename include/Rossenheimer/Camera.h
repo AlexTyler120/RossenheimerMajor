@@ -23,6 +23,7 @@ class Camera
 
     bool getTagDetected();
     double getTagOffset();
+    int getTagID();
 
 private:
     image_transport::Subscriber sub_;
@@ -32,6 +33,7 @@ private:
     double m_tag_offset = 0.0;
     bool m_tag_detected = false;
     double m_dist_from_tag;
+    int m_tag_id;
 };
 
   // const std::string IMAGE_TOPIC = "/camera/image_raw";    // use for hardware

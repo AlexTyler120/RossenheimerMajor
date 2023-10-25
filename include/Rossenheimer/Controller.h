@@ -70,6 +70,12 @@ class Controller
     //--Private Member Variables--
     uint8_t turtlebot3_state_num;        // variable to store case for algorithm
 
+    std::map<int, std::pair<double, double>> tag_positions;  // map with tag ID as key, odom x and y as pair of values
+
+    bool odom_saved = false;  // flag to check if odometer values have been saved
+
+    int prev_tag_ID = -1;
+
     //--Constant Definitions--
     double PROXIMITY        = 0.4; // prev 0.2
     double WALL_LINEAR      = 0.12;

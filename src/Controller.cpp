@@ -24,7 +24,7 @@ Controller::~Controller()
 // This function will check if there is a wall to the left or infront and will take action accordingly
 void Controller::MazeSolver(Sensor* readLidar, Sensor* readOdometer, Motor* readMotor, Camera* readCamera)
 {
-    std::cout << "TESTING MAZE SOLVER" << std::endl;
+    // std::cout << "TESTING MAZE SOLVER" << std::endl;
     ROS_INFO("%f, %f, %f ", readOdometer->sensorGetData(2), readOdometer->sensorGetData(3), readOdometer->sensorGetData(1));
     turtlebot3_state_num = GET_TB3_DIRECTION;
 
@@ -39,6 +39,44 @@ void Controller::MazeSolver(Sensor* readLidar, Sensor* readOdometer, Motor* read
 
     // reading in distance from april tag to center of camera
     double tag_offset = readCamera->getTagOffset();
+
+    if (tag_detected && ((readCamera->getTagOffset() < 15) && (readCamera->getTagOffset() > -15)))  // TODO: fix magic numbers
+    {
+      int tag_ID = readCamera->getTagID();
+      if (tag_ID != prev_tag_ID)
+        {
+          odom_saved = false;
+          prev_tag_ID = tag_ID;
+        }
+      double odom_x = readOdometer->sensorGetData(2);   // TODO: fix floating numbers, define in .h and remove definition in TurtleBot.h
+      double odom_y = readOdometer->sensorGetData(3);
+
+      if (!odom_saved)
+      {
+        tag_positions[tag_ID] = std::make_pair(odom_x, odom_y);
+        odom_saved = true;
+
+        // Print the tag ID and stored values for debugging
+        ROS_INFO("Tag ID %d: odom_x = %f, odom_y = %f", tag_ID, odom_x, odom_y);
+      }
+      
+      // error checking, search for tag ID in the tag_positions map
+      auto it = tag_positions.find(tag_ID);
+      if (it != tag_positions.end())
+      {
+        // If the tag ID is found, retrieve the stored values
+        double map_odom_x = it->second.first;
+        double map_odom_y = it->second.second;
+
+        // Print the tag ID and stored values for debugging
+        ROS_INFO("Tag ID %d: odom_x = %f, odom_y = %f", tag_ID, map_odom_x, map_odom_y);
+      }
+      else
+      {
+        // If the tag ID is not found, print an error message
+        ROS_INFO("Tag ID %d not found in tag_positions map", tag_ID);
+      }
+    }
 
 
     if (tag_detected)
@@ -82,10 +120,10 @@ void Controller::MazeSolver(Sensor* readLidar, Sensor* readOdometer, Motor* read
     //     wallFollow(left_distance, readLidar, readOdometer, readMotor);
     //     break;
 
-    //   case TB3_APRIL_CENTER:
-    //     std::cout << "CENTERING" << std::endl;
-    //     centerTag(readCamera, readMotor, readLidar);
-    //     break;
+      // case TB3_APRIL_CENTER:
+      //   std::cout << "CENTERING" << std::endl;
+      //   centerTag(readCamera, readMotor, readLidar);
+      //   break;
 
     //   case TB3_STOP:
     //     std::cout << "STOPPING" << std::endl;
@@ -94,11 +132,11 @@ void Controller::MazeSolver(Sensor* readLidar, Sensor* readOdometer, Motor* read
     //   default:
     //     std::cout << "GETTING TB3 DIRECTION" << std::endl;
     //     break;
-    // }
+    }
 
-    return;
+    // return;
 
-}
+// }
 // findWall sets the TurtleBot3 on an arc trajectory leftward until a wall is found
 void Controller::findWall(Motor* readMotor)
 {
