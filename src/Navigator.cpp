@@ -50,13 +50,15 @@ void Navigator::SetGoal(double x, double y, double pose, int goalType)
     
 }
 
-void Navigator::SetGoal(int april_id, double x, double y)
+void Navigator::SetGoal(int april_id, double x, double y, double orientation)
 {
-  _ids_pos.insert(std::make_pair(april_id, std::make_pair(x, y)));
+  _ids_pos.insert(std::make_pair(april_id, std::make_pair(std::make_pair(x, y), orientation)));
 }
 
 void Navigator::SortGoals()
 {
+  // 129
+  // 275
   for (auto it: _ids_pos)
   {
     Goal* pGoal;
@@ -66,12 +68,13 @@ void Navigator::SortGoals()
     
     if (temp_id <= 50)
     {
-      pGoal = new GoalFire(it.second.first, it.second.second, 0);
+      // x, y, pose 
+      pGoal = new GoalFire(it.second.first.first, it.second.first.second, it.second.second);
     }
 
     else
     {
-      pGoal = new GoalFlood(it.second.first, it.second.second, 0);
+      pGoal = new GoalFlood(it.second.first.first, it.second.first.second, it.second.second);
     }  
 
     _priorityBook[ans].insert(pGoal);      

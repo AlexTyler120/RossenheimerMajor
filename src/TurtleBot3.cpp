@@ -49,10 +49,11 @@ TurtleBot3::~TurtleBot3()
 //--TurtleBot3 solveMaze Implementation------------------------------
 // Loop for ros to read data and determine appropriate manoeuvre
 // Call algorithm from controller of TurtleBot3
-bool TurtleBot3::solveMaze()
+bool TurtleBot3::solveMaze(Camera* readCamera, Sensor* readLidar, Sensor* readOdometer)
 {
+    _controller->frontierDetection(readCamera, readLidar, readOdometer);
+    
     ros::Rate loop_rate(125);   // set loop rate for ros
-
     while (ros::ok)             // establish loop for node to operate
     {
         // pass lidar, odometer and motor pointers into the algorithm of controller

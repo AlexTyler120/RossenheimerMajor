@@ -16,6 +16,9 @@
 #include "Navigator.h"
 
 
+#include <cmath>
+
+
 // enum:case structure for
 enum
 {   GET_TB3_DIRECTION = 0,
@@ -23,7 +26,10 @@ enum
     TB3_RIGHT_TURN,
     TB3_WALL_FOLLOW,
     TB3_APRIL_CENTER,
-    TB3_STOP
+    TB3_STOP,
+    TB3_FRONTIER_DETECTION,
+    TB3_MOVE_BASE,
+    TB3_MOVE_GOAL
 };
 
 
@@ -44,7 +50,9 @@ class Controller
     //--Functionality--
     void MazeSolver(Sensor* readLidar, Sensor* readOdometer, Motor* readMotor, Camera* readCamera);
       
-
+    void SaveWorld(Sensor* readLidar, Sensor* readOdometer, Motor* readMotor, Camera* readCamera);
+    
+    void frontierDetection(Camera* readCamera, Sensor* readLidar, Sensor* readOdometer);
 
    private:
     //--Functionality--
@@ -64,6 +72,12 @@ class Controller
 
 
     void centerTag(Camera* readCamera, Motor* readMotor, Sensor* readLidar);
+
+    
+
+    void moveBase();
+
+    void moveGoal();
 
     Navigator* _Navigator; // controller has a navigator
 
@@ -95,6 +109,13 @@ class Controller
     double MULTIPLIER_LIMIT = 0.7;
 
     double FLAG_IN_CENTER  = 30.0;
+
+
+    double prev_x;
+    double prev_y;
+    double prev_pose;
+
+    int count;
 };
 
 
