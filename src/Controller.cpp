@@ -49,8 +49,8 @@ void Controller::MazeSolver(Sensor* readLidar, Sensor* readOdometer, Motor* read
     {
       //quick test to move to init goal
       ROS_INFO("Moving to goal");
-      _Navigator->MoveToGoal(0);
-      ROS_INFO("Moved to goal");
+      // _Navigator->MoveToGoal(0);
+      // ROS_INFO("Moved to goal");
       //turtlebot3_state_num = TB3_FIND_WALL;
     }
     // else if (left_wall && !front_wall) // theres a wall to the left so follow it, might be following on a diagonal so will use too_close to adjust
