@@ -1,7 +1,10 @@
 #include "../include/Rossenheimer/Camera.h"
 
 
-Camera::Camera() {}
+Camera::Camera() 
+{
+  ROS_INFO("[CTor]: Camera.");
+}
 
 Camera::Camera(ros::NodeHandle& nh_)
 {

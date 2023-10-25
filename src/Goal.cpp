@@ -3,7 +3,8 @@
 
 Goal::Goal()
 {
-    ROS_INFO("YOU FUCKED UP.");
+    ROS_INFO("Goal Created.");
+    
 }
 Goal::Goal(double coord_x, double coord_y, double orientation, int type, int id){
     ROS_INFO("OH SHIT GOAL CREATED OH NO.");
@@ -41,6 +42,10 @@ Goal::~Goal(){
     ROS_INFO("OH SHIT GOAL DESTROYED OH YEAH.");
 }
 
+int Goal::GetType()
+{
+    return Target_type;
+}
 void Goal::actionTask(){
 
 }

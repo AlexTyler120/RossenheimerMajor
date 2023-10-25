@@ -50,6 +50,69 @@ Navigator::~Navigator()
     
 // }
 
+int* Navigator::algorithm()
+{
+  int* resupply = new int[2];
+  resupply[0] = 0;
+  resupply[1] = 0;
+
+  if (_priorityBook[PRIORITY0].size() > 0)
+  {
+    objectives.push_back(_priorityBook[PRIORITY0].front());
+    resupply[_priorityBook[PRIORITY0].front()->GetType() - 1] = 3;
+    _priorityBook[PRIORITY0].erase(_priorityBook[PRIORITY0].begin());
+
+    ROS_INFO("Priority 0: Task Set");
+  }
+
+  else if (_priorityBook[PRIORITY1].size() > 0)
+  {
+     objectives.push_back(_priorityBook[PRIORITY1].front());
+    resupply[_priorityBook[PRIORITY1].front()->GetType() - 1] += 2;
+    _priorityBook[PRIORITY1].erase(_priorityBook[PRIORITY1].begin());
+
+    if (_priorityBook[PRIORITY2].size() > 0)
+    {
+      objectives.push_back(_priorityBook[PRIORITY2].front());
+      resupply[_priorityBook[PRIORITY2].front()->GetType() - 1] += 1;
+      _priorityBook[PRIORITY2].erase(_priorityBook[PRIORITY2].begin());
+
+    }
+  }
+
+  else if (_priorityBook[PRIORITY2].size() > 0)
+  {
+    if (_priorityBook[PRIORITY2].size() > 3)
+    {
+      for (int i = 0; i < 3; i++)
+      {
+        objectives.push_back(_priorityBook[PRIORITY2].front());
+        resupply[_priorityBook[PRIORITY2][i]->GetType() -1] += 1;
+        _priorityBook[PRIORITY2].erase(_priorityBook[PRIORITY2].begin());
+
+      }
+    }
+
+    else
+    {
+      for (int i = 0; i < _priorityBook[PRIORITY2].size(); i++)
+      {
+        objectives.push_back(_priorityBook[PRIORITY2].front());
+        resupply[_priorityBook[PRIORITY2][i]->GetType() -1] += 1;
+        _priorityBook[PRIORITY2].erase(_priorityBook[PRIORITY2].begin());
+      }
+    }
+  }
+
+  return resupply;
+  
+}
+
+std::vector<Goal*> Navigator::GetAddress()
+{
+  return objectives;
+
+}
 Goal* Navigator::GetBase()
 {
   return BaseGoal;
@@ -57,12 +120,13 @@ Goal* Navigator::GetBase()
 
 void Navigator::SetBase(double x, double y, double orientation)
 {
-  BaseGoal = new GoalBased(x, y, orientation, TYPE_BASE);  
+  ROS_INFO("FUKCING UNUONFKC NOIN .");
+  BaseGoal = new GoalBased(x, y, orientation, TYPE_BASE, 0);  
 }
 
 void Navigator::SetGoal(int april_id, double x, double y, double orientation)
 {
-  _ids_pos.insert(std::make_pair(april_id, std::make_pair(std::make_pair(x, y), orientation)));
+  _ids_pos.push_back(std::make_pair(april_id, std::make_pair(std::make_pair(x, y), orientation)));
 }
 
 void Navigator::SortGoals()
@@ -70,6 +134,7 @@ void Navigator::SortGoals()
 
   for (auto it: _ids_pos)
   {
+    
     Goal* pGoal;
 
     int ans = floor(it.first/100);              // priority of the incident
@@ -77,15 +142,15 @@ void Navigator::SortGoals()
     
     if (temp_id <= 50)
     {
-      pGoal = new GoalFire(it.second.first.first, it.second.first.second, it.second.second, TYPE_FIRE);
+      pGoal = new GoalFire(it.second.first.first, it.second.first.second, it.second.second, TYPE_FIRE, temp_id);
     }
 
     else
     {
-      pGoal = new GoalFlood(it.second.first.first, it.second.first.second, it.second.second, TYPE_FLOOD);
+      pGoal = new GoalFlood(it.second.first.first, it.second.first.second, it.second.second, TYPE_FLOOD, temp_id);
     }  
 
-    _priorityBook[ans].insert(pGoal);      
+    _priorityBook[ans].push_back(pGoal);      
   }
 }
 
@@ -148,10 +213,5 @@ void Navigator::MoveToGoal(Goal* mvGoal)
     else
     {
       ROS_INFO("Failed to reach goal");
-    }
-
-    // if (mvGoal == type(GoalBased))
-    {
-      // figureOutPath
     }
 }

@@ -2,7 +2,7 @@
 
 #include "../include/Rossenheimer/Goal/GoalFire.h"
 
-GoalFire::GoalFire(double coord_x, double coord_y, double orientation, int type)
+GoalFire::GoalFire(double coord_x, double coord_y, double orientation, int type, int id)
 {
     ROS_INFO("[CTor]: Fire.");
 }
@@ -16,5 +16,5 @@ GoalFire::~GoalFire()
 void GoalFire::actionTask()
 {
     ROS_INFO("Extinguishing Fire");
-    status = false;
+    // status = false;
 }

@@ -26,12 +26,13 @@
 
 int main(int argc, char** argv) {
 
+   ROS_INFO("MAIN HERE.");
 
    ros::init(argc, argv, "turtlebot3_drive");  // initialise ros later use
    ros::NodeHandle nh_;                        // construct node handler
    TurtleBot3 Ken(nh_);                        // instantiate TurtleBot3 object
 
-   Ken.solveMaze();                            // call solving Maze Function
+   Ken.solveMaze( &Ken);                            // call solving Maze Function
    
   
    return 0;

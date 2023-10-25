@@ -21,6 +21,7 @@
 #include <cmath>
 
 
+
 // enum:case structure for
 enum
 {   GET_TB3_DIRECTION = 0,
@@ -56,11 +57,17 @@ class Controller
     
     void frontierDetection(Camera* readCamera, Sensor* readLidar, Sensor* readOdometer);
 
+<<<<<<< HEAD
     void mapCallback(const nav_msgs::OccupancyGrid::ConstPtr& map);
+=======
+    int* getDepots();
+>>>>>>> 74b378d15749066e627f49913c7e338e941e9e39
 
    private:
     //--Functionality--
     
+    
+
     // findWall sets the TurtleBot3 on an arc trajectory leftward until a wall is found
     void findWall(Motor* readMotor);
 
@@ -113,6 +120,7 @@ class Controller
     double prev_y;
     double prev_pose;
 
+    int* depot;
     int count;
     // Define global variables for map dimensions and exploration completion threshold
     int map_width = 0;
