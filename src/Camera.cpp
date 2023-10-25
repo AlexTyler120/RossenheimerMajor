@@ -55,8 +55,24 @@ void Camera::imageCallback(const sensor_msgs::ImageConstPtr& msg)
   if (!markerIds.empty())
   {
     m_tag_detected = true;
-    int markerIndex = 0; // Use the first detected marker
-    cv::Moments moments = cv::moments(markerCorners[markerIndex]);
+    int tagID = markerIds[markerIds.size()-1]; // Use the first detected marker
+    m_tag_id = tagID;
+    cv::Mat grayImage;
+    if (cvPointer->image.channels() == 3)
+    {
+        cv::cvtColor(cvPointer->image, grayImage, cv::COLOR_BGR2GRAY);
+    }
+    else if (cvPointer->image.channels() == 4)
+    {
+        cv::cvtColor(cvPointer->image, grayImage, cv::COLOR_BGRA2GRAY);
+    }
+    else
+    {
+        grayImage = cvPointer->image;
+    }
+
+    cv::Moments moments = cv::moments(grayImage, true);
+
     double cx = moments.m10 / moments.m00;
     int imageWidth = cvPointer->image.cols;
     int centerX = imageWidth / 2;
@@ -79,4 +95,9 @@ bool Camera::getTagDetected()
 double Camera::getTagOffset()
 {
     return m_tag_offset;
+}
+
+int Camera::getTagID()
+{
+  return m_tag_id;
 }

@@ -13,6 +13,8 @@
 #include "../include/Rossenheimer/Goal/GoalFire.h"
 #include "../include/Rossenheimer/Goal/GoalFlood.h"
 
+#include <vector>
+
 Navigator::Navigator()
 {
     GoalNum = 0;
@@ -46,6 +48,37 @@ void Navigator::SetGoal(double x, double y, double pose, int goalType)
     }
     GoalNum += 1;
     
+}
+
+void Navigator::SetGoal(int april_id, double x, double y, double orientation)
+{
+  _ids_pos.insert(std::make_pair(april_id, std::make_pair(std::make_pair(x, y), orientation)));
+}
+
+void Navigator::SortGoals()
+{
+  // 129
+  // 275
+  for (auto it: _ids_pos)
+  {
+    Goal* pGoal;
+
+    int ans = floor(it.first/100);              // priority of the incident
+    int temp_id = it.first - (100 * ans);       // id of the incident
+    
+    if (temp_id <= 50)
+    {
+      // x, y, pose 
+      pGoal = new GoalFire(it.second.first.first, it.second.first.second, it.second.second);
+    }
+
+    else
+    {
+      pGoal = new GoalFlood(it.second.first.first, it.second.first.second, it.second.second);
+    }  
+
+    _priorityBook[ans].insert(pGoal);      
+  }
 }
 
 void Navigator::MoveToGoal(int GoalNum)
