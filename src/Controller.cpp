@@ -23,38 +23,41 @@ Controller::~Controller()
 
 void Controller::frontierDetection(Camera* readCamera, Sensor* readLidar, Sensor* readOdometer)
 {
-  while (count > -1)
+  while (count < 125*80*500)
   {
-    double current_x;
-    double current_y;
-    double current_pose;
+    ROS_INFO("Count: %d", count);
+    // double current_x;
+    // double current_y;
+    // double current_pose;
 
-    if (count/(125*40) == 1 || count == 0)
-    {
-      ROS_INFO("5s elapsed: setting previous.");
-      prev_x = readOdometer->sensorGetData(2);
-      prev_y = readOdometer->sensorGetData(3);
-      prev_pose = readOdometer->sensorGetData(1);
-    }
+    // if (count/(125*40) == 1 || count == 0)
+    // {
+    //   ROS_INFO("5s elapsed: setting previous.");
+    //   ROS_INFO("5s %f", count/(125*40));
+    //   prev_x = readOdometer->sensorGetData(2);
+    //   prev_y = readOdometer->sensorGetData(3);
+    //   prev_pose = readOdometer->sensorGetData(1);
+    // }
 
-    else if (count/(125*80) == 1)
-    {
-      ROS_INFO("10s elapsed: setting current.");
-      count = 0;
-      current_x = readOdometer->sensorGetData(2);
-      current_y = readOdometer->sensorGetData(3);
-      current_pose = readOdometer->sensorGetData(1);
-    }
+    // else if (count/(125*80) == 1)
+    // {
+    //   ROS_INFO("10s elapsed: setting current.");
+    //   ROS_INFO("10 s %f", count/(125*80));
+    //   count = 0;
+    //   current_x = readOdometer->sensorGetData(2);
+    //   current_y = readOdometer->sensorGetData(3);
+    //   current_pose = readOdometer->sensorGetData(1);
+    // }
 
 // (((current_x < (prev_x+0.05)) && (current_x > (prev_x-0.05))) && ((current_y < (prev_y+0.05)) && (current_y > (prev_y-0.05))) )
-    if ((current_x == prev_x) && (current_y == prev_y))
-    {
-      ROS_INFO("There's something inside you");
-      return;
-    }
+    // if ((current_x == prev_x) && (current_y == prev_y))
+    // {
+    //   ROS_INFO("There's something inside you");
+    //   return;
+    // }
     
-    else
-    {
+    // else
+    // {
       bool tag_detected = readCamera->getTagDetected(); // reading in if a tag is detected
 
       // reading in distance from april tag to center of camera
@@ -105,9 +108,12 @@ void Controller::frontierDetection(Camera* readCamera, Sensor* readLidar, Sensor
         //   ROS_INFO("Tag ID %d not found in tag_positions map", tag_ID);
         // }
       }
+      count++;
     }
-    count++;
-  }
+    
+    ROS_INFO("There's something inside you");
+    return;
+  // }
 }
 
 
