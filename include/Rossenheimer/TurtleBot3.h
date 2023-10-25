@@ -37,7 +37,7 @@ class TurtleBot3
         // to run the maze solving algorithm, and run necessary
         // manoeuvres and movements, depending on readings from the
         // Sensors.
-        bool solveMaze(Camera* readCamera, Sensor* readLidar, Sensor* readOdometer);
+        bool solveMaze();
 
         void addPathPoint();       // add path point to vector
         double getOdom(int req);   // get odometer data
