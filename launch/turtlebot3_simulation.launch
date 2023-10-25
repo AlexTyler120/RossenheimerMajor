@@ -5,6 +5,9 @@
   <param name="cmd_vel_topic_name" value="$(arg cmd_vel)"/>
   <arg name="multi_robot_name" default=""/>
   
+  <param name="use_sim_time" value="false"/>
+
+  
   <include file="$(find Rossenheimer)/launch/includes/description.launch.xml">
 	
   </include>
@@ -16,7 +19,9 @@
   
     <!-- <node name="main" pkg="Rossenheimer" type="main" required="true" output="screen"/>
   <node name="movement" pkg="Rossenheimer" type="movement" required="true" output="screen"/> -->
+  
   <node name="main" pkg="Rossenheimer" type="main" required="true" output="screen"/>
+  
   <!-- <node name="sensors" pkg="Rossenheimer" type="sensors" required="true" output="screen"/> -->
 
 </launch>
