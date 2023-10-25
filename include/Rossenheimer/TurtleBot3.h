@@ -56,12 +56,9 @@ class TurtleBot3
           static const uint8_t MAX_SENSORS = 2;       // max number of TurtleBot3 sensors
 
           //--Member Variables--
-<<<<<<< HEAD
-=======
           int sandbag_payload;
           int spray_payload;
 
->>>>>>> 74b378d15749066e627f49913c7e338e941e9e39
           Sensor* TurtleBotSensors[MAX_SENSORS];      // array of Sensors pointers (child: Lidar, Odometer)
           Motor* _motor;                              // pointer to motor (manipulate linear/angular velocity)
           Controller* _controller;                    // pointer to controller (brain/ algorithm of TurtleBot3)
@@ -69,10 +66,6 @@ class TurtleBot3
 
           ros::Publisher marker_pub;                           // publisher for path
           visualization_msgs::Marker path_marker;
-<<<<<<< HEAD
-
-=======
->>>>>>> 74b378d15749066e627f49913c7e338e941e9e39
 };
 
 

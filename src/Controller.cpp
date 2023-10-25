@@ -44,13 +44,8 @@ void Controller::frontierDetection(Camera* readCamera, Sensor* readLidar, Sensor
       current_y = readOdometer->sensorGetData(3);
     }
 
-<<<<<<< HEAD
-
-    if (((current_x < (prev_x+0.05)) && (current_x > (prev_x-0.05))) && ((current_y < (prev_y+0.05)) && (current_y > (prev_y-0.05))))
-=======
 // (((current_x < (prev_x+0.05)) && (current_x > (prev_x-0.05))) && ((current_y < (prev_y+0.05)) && (current_y > (prev_y-0.05))) )
     if ((current_x == prev_x) && (current_y == prev_y))
->>>>>>> 74b378d15749066e627f49913c7e338e941e9e39
     {
       ROS_INFO("There's something inside you");
       return;

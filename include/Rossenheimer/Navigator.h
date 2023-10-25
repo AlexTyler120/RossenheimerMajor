@@ -42,13 +42,9 @@ class Navigator {
         int* algorithm();
 
     private:
-<<<<<<< HEAD
-
-=======
         
         
         
->>>>>>> 74b378d15749066e627f49913c7e338e941e9e39
         static const int numPriorities = 3;
 
         // std::vector<std::pair< Goal *, int>> Goals;

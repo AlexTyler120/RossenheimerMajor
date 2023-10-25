@@ -57,11 +57,7 @@ class Controller
     
     void frontierDetection(Camera* readCamera, Sensor* readLidar, Sensor* readOdometer);
 
-<<<<<<< HEAD
-    void mapCallback(const nav_msgs::OccupancyGrid::ConstPtr& map);
-=======
     int* getDepots();
->>>>>>> 74b378d15749066e627f49913c7e338e941e9e39
 
    private:
     //--Functionality--
