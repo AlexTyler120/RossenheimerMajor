@@ -29,7 +29,7 @@ void Controller::frontierDetection(Camera* readCamera, Sensor* readLidar, Sensor
     double current_y;
     double current_pose;
 
-    if (count/(125*40) == 1)
+    if (count/(125*40) == 1 || count == 0)
     {
       ROS_INFO("5s elapsed: setting previous.");
       prev_x = readOdometer->sensorGetData(2);
