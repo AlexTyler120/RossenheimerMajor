@@ -120,12 +120,13 @@ Goal* Navigator::GetBase()
 
 void Navigator::SetBase(double x, double y, double orientation)
 {
+  ROS_INFO("FUKCING UNUONFKC NOIN .");
   BaseGoal = new GoalBased(x, y, orientation, TYPE_BASE, 0);  
 }
 
 void Navigator::SetGoal(int april_id, double x, double y, double orientation)
 {
-  _ids_pos.insert(std::make_pair(april_id, std::make_pair(std::make_pair(x, y), orientation)));
+  _ids_pos.push_back(std::make_pair(april_id, std::make_pair(std::make_pair(x, y), orientation)));
 }
 
 void Navigator::SortGoals()
@@ -133,6 +134,7 @@ void Navigator::SortGoals()
 
   for (auto it: _ids_pos)
   {
+    
     Goal* pGoal;
 
     int ans = floor(it.first/100);              // priority of the incident

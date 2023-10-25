@@ -26,6 +26,7 @@
 
 int main(int argc, char** argv) {
 
+   ROS_INFO("MAIN HERE.");
 
    ros::init(argc, argv, "turtlebot3_drive");  // initialise ros later use
    ros::NodeHandle nh_;                        // construct node handler

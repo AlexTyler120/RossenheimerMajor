@@ -49,10 +49,10 @@ class Navigator {
 
         // std::vector<std::pair< Goal *, int>> Goals;
 
-        std::set< std::pair<int, std::pair<std::pair<double, double>, double>>> _ids_pos;
+        std::vector< std::pair<int, std::pair<std::pair<double, double>, double>>> _ids_pos;
         std::array< std::vector <Goal *>, numPriorities> _priorityBook;
         std::vector < Goal * > objectives;
-        Goal* BaseGoal;
+        GoalBased* BaseGoal;
 
         int addresses[3] = {0, 0, 0};
 

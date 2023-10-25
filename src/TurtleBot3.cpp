@@ -60,14 +60,15 @@ void TurtleBot3::updateTank(int* depot_array)
 // Call algorithm from controller of TurtleBot3
 bool TurtleBot3::solveMaze(TurtleBot3* bot)
 {
+    ROS_INFO("ENTERED solveMaze");
     _controller->frontierDetection(_camera,TurtleBotSensors[LIDAR_INDEX], TurtleBotSensors[ODOMETER_INDEX]);
 
     ros::Rate loop_rate(125);   // set loop rate for ros
     while (ros::ok)             // establish loop for node to operate
     {
         // pass lidar, odometer and motor pointers into the algorithm of controller
-        _controller->MazeSolver(TurtleBotSensors[0], TurtleBotSensors[1], _motor, _camera);
-
+        // _controller->MazeSolver(TurtleBotSensors[0], TurtleBotSensors[1], _motor, _camera);
+        _controller->SaveWorld(TurtleBotSensors[LIDAR_INDEX],TurtleBotSensors[ODOMETER_INDEX], _motor, _camera);
         updateTank(_controller->getDepots());
 
         addPathPoint();

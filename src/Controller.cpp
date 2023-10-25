@@ -8,7 +8,7 @@ Controller::Controller(Sensor* readOdometer)
     _Navigator = new Navigator();
     // Sensor* InitPose;
     int base_april = 0;
-
+    ROS_INFO("MADE IT HERE.");
     _Navigator->SetBase(readOdometer->sensorGetData(2), readOdometer->sensorGetData(3), readOdometer->sensorGetData(1));
     
     count = 0;
@@ -31,15 +31,17 @@ void Controller::frontierDetection(Camera* readCamera, Sensor* readLidar, Sensor
     double current_y;
     double current_pose;
 
-    if (count/(125*40) == 1 || count == 1)
+    if (count/(125*40*500) == 1 || count == 1)
     {
+      ROS_INFO("5s elapsed: setting previous.");
       prev_x = readOdometer->sensorGetData(2);
       prev_y = readOdometer->sensorGetData(3);
       prev_pose = readOdometer->sensorGetData(1);
     }
 
-    else if (count/(125*80) == 1)
+    else if (count/(125*80*500) == 1)
     {
+      ROS_INFO("10s elapsed: setting current.");
       count = 0;
       current_x = readOdometer->sensorGetData(2);
       current_y = readOdometer->sensorGetData(3);
@@ -49,7 +51,8 @@ void Controller::frontierDetection(Camera* readCamera, Sensor* readLidar, Sensor
 // (((current_x < (prev_x+0.05)) && (current_x > (prev_x-0.05))) && ((current_y < (prev_y+0.05)) && (current_y > (prev_y-0.05))) )
     if ((current_x == prev_x) && (current_y == prev_y))
     {
-      return;
+      ROS_INFO("There's something inside you");
+      //return;
     }
     
     else
@@ -63,39 +66,46 @@ void Controller::frontierDetection(Camera* readCamera, Sensor* readLidar, Sensor
       if (tag_detected && ((readCamera->getTagOffset() < 15) && (readCamera->getTagOffset() > -15)))  // TODO: fix magic numbers
       {
         int tag_ID = readCamera->getTagID();
-        if (tag_ID != prev_tag_ID)
-          {
-            odom_saved = false;
-            prev_tag_ID = tag_ID;
-          }
         double odom_x = readOdometer->sensorGetData(2);   // TODO: fix floating numbers, define in .h and remove definition in TurtleBot.h
         double odom_y = readOdometer->sensorGetData(3);
+        double orientation = readOdometer->sensorGetData(1);
 
-        if (!odom_saved)
-        {
-          tag_positions[tag_ID] = std::make_pair(odom_x, odom_y);
-          odom_saved = true;
-
-          // Print the tag ID and stored values for debugging
-          ROS_INFO("Tag ID %d: odom_x = %f, odom_y = %f", tag_ID, odom_x, odom_y);
-        }
+        _Navigator->SetGoal(tag_ID, odom_x, odom_y, orientation);
         
-        // error checking, search for tag ID in the tag_positions map
-        auto it = tag_positions.find(tag_ID);
-        if (it != tag_positions.end())
-        {
-          // If the tag ID is found, retrieve the stored values
-          double map_odom_x = it->second.first;
-          double map_odom_y = it->second.second;
+        // if (tag_ID != prev_tag_ID)
+        
+        //   {
+        //     odom_saved = false;
+        //     prev_tag_ID = tag_ID;
+        //   }
+        
+        
 
-          // Print the tag ID and stored values for debugging
-          ROS_INFO("Tag ID %d: odom_x = %f, odom_y = %f", tag_ID, map_odom_x, map_odom_y);
-        }
-        else
-        {
-          // If the tag ID is not found, print an error message
-          ROS_INFO("Tag ID %d not found in tag_positions map", tag_ID);
-        }
+        // if (!odom_saved)
+        // {
+        //   tag_positions[tag_ID] = std::make_pair(odom_x, odom_y);
+        //   odom_saved = true;
+
+        //   // Print the tag ID and stored values for debugging
+        //   ROS_INFO("Tag ID %d: odom_x = %f, odom_y = %f", tag_ID, odom_x, odom_y);
+        // }
+        
+        // // error checking, search for tag ID in the tag_positions map
+        // auto it = tag_positions.find(tag_ID);
+        // if (it != tag_positions.end())
+        // {
+        //   // If the tag ID is found, retrieve the stored values
+        //   double map_odom_x = it->second.first;
+        //   double map_odom_y = it->second.second;
+
+        //   // Print the tag ID and stored values for debugging
+        //   ROS_INFO("Tag ID %d: odom_x = %f, odom_y = %f", tag_ID, map_odom_x, map_odom_y);
+        // }
+        // else
+        // {
+        //   // If the tag ID is not found, print an error message
+        //   ROS_INFO("Tag ID %d not found in tag_positions map", tag_ID);
+        // }
       }
     }
   }
