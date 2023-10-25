@@ -35,7 +35,6 @@ void Controller::frontierDetection(Camera* readCamera, Sensor* readLidar, Sensor
     {
       prev_x = readOdometer->sensorGetData(2);
       prev_y = readOdometer->sensorGetData(3);
-      prev_pose = readOdometer->sensorGetData(1);
     }
 
     else if (count/(125*80) == 1)
@@ -43,11 +42,10 @@ void Controller::frontierDetection(Camera* readCamera, Sensor* readLidar, Sensor
       count = 0;
       current_x = readOdometer->sensorGetData(2);
       current_y = readOdometer->sensorGetData(3);
-      current_pose = readOdometer->sensorGetData(1);
     }
 
 
-    if ((current_x == prev_x) && (current_y == prev_y) && (current_pose == prev_pose))
+    if (((current_x < (prev_x+0.05)) && (current_x > (prev_x-0.05))) && ((current_y < (prev_y+0.05)) && (current_y > (prev_y-0.05))))
     {
       return;
     }
@@ -100,7 +98,6 @@ void Controller::frontierDetection(Camera* readCamera, Sensor* readLidar, Sensor
     }
   }
 }
-
 
 void Controller::SaveWorld(Sensor* readLidar, Sensor* readOdometer, Motor* readMotor, Camera* readCamera)
 {

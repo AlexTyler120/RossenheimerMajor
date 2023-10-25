@@ -31,8 +31,7 @@ class Navigator {
         Goal* GetBase();
 
     private:
-        
-        
+
         static const int numPriorities = 3;
 
         // std::vector<std::pair< Goal *, int>> Goals;

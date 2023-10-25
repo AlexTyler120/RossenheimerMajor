@@ -5,6 +5,8 @@
 
 // Include ros
 #include <ros/ros.h>
+#include <nav_msgs/OccupancyGrid.h>
+#include <std_msgs/Float32.h>
 
 
 // Include all necessary header files
@@ -53,6 +55,8 @@ class Controller
     void SaveWorld(Sensor* readLidar, Sensor* readOdometer, Motor* readMotor, Camera* readCamera);
     
     void frontierDetection(Camera* readCamera, Sensor* readLidar, Sensor* readOdometer);
+
+    void mapCallback(const nav_msgs::OccupancyGrid::ConstPtr& map);
 
    private:
     //--Functionality--
@@ -110,6 +114,10 @@ class Controller
     double prev_pose;
 
     int count;
+    // Define global variables for map dimensions and exploration completion threshold
+    int map_width = 0;
+    int map_height = 0;
+    const float completion_threshold = 0.95;  // Adjust this based on your requirements
 };
 
 

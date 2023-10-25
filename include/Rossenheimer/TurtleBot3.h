@@ -43,19 +43,20 @@ class TurtleBot3
         double getOdom(int req);   // get odometer data
 
    private:
-        //-- Consts for the TurtleBot3 
-        static const uint8_t LIDAR_INDEX = 0;       // index for Lidar Sensor
-        static const uint8_t ODOMETER_INDEX = 1;    // index for Odometer Sensor
-        static const uint8_t MAX_SENSORS = 2;       // max number of TurtleBot3 sensors
+          //-- Consts for the TurtleBot3 
+          static const uint8_t LIDAR_INDEX = 0;       // index for Lidar Sensor
+          static const uint8_t ODOMETER_INDEX = 1;    // index for Odometer Sensor
+          static const uint8_t MAX_SENSORS = 2;       // max number of TurtleBot3 sensors
 
-        //--Member Variables--
-        Sensor* TurtleBotSensors[MAX_SENSORS];      // array of Sensors pointers (child: Lidar, Odometer)
-        Motor* _motor;                              // pointer to motor (manipulate linear/angular velocity)
-        Controller* _controller;                    // pointer to controller (brain/ algorithm of TurtleBot3)
-        Camera* _camera;
+          //--Member Variables--
+          Sensor* TurtleBotSensors[MAX_SENSORS];      // array of Sensors pointers (child: Lidar, Odometer)
+          Motor* _motor;                              // pointer to motor (manipulate linear/angular velocity)
+          Controller* _controller;                    // pointer to controller (brain/ algorithm of TurtleBot3)
+          Camera* _camera;
 
-        ros::Publisher marker_pub;                           // publisher for path
-        visualization_msgs::Marker path_marker;
+          ros::Publisher marker_pub;                           // publisher for path
+          visualization_msgs::Marker path_marker;
+
 };
 
 
