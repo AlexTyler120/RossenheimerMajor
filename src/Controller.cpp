@@ -70,24 +70,24 @@ void Controller::frontierDetection(Camera* readCamera, Sensor* readLidar, Sensor
         
         // if (tag_ID != prev_tag_ID)
         
-        //   {
-        //     odom_saved = false;
-        //     prev_tag_ID = tag_ID;
-        //   }
+        // {
+        //   odom_saved = false;
+        //   prev_tag_ID = tag_ID;
+        // }
         
-        
+        // auto it = tag_positions.find(tag_ID);
 
         // if (!odom_saved)
         // {
-        //   tag_positions[tag_ID] = std::make_pair(odom_x, odom_y);
-        //   odom_saved = true;
+        //   if (it == tag_positions.end())
+        //   {
+        //     tag_positions[tag_ID] = std::make_pair(odom_x, odom_y);
+        //     odom_saved = true;
 
-        //   // Print the tag ID and stored values for debugging
-        //   ROS_INFO("Tag ID %d: odom_x = %f, odom_y = %f", tag_ID, odom_x, odom_y);
+        //     // Print the tag ID and stored values for debugging
+        //     ROS_INFO("Tag ID %d: odom_x = %f, odom_y = %f", tag_ID, odom_x, odom_y);
+        //   }
         // }
-        
-        // // error checking, search for tag ID in the tag_positions map
-        // auto it = tag_positions.find(tag_ID);
         // if (it != tag_positions.end())
         // {
         //   // If the tag ID is found, retrieve the stored values
