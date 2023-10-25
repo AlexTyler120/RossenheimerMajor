@@ -73,6 +73,8 @@
   <build_export_depend>sensor_msgs</build_export_depend>
   <build_export_depend>std_msgs</build_export_depend>
   <build_export_depend>tf</build_export_depend>
+  <build_export_depend>move_base_msgs</build_export_depend>
+  <build_export_depend>actionlib</build_export_depend>
   <build_export_depend>turtlebot3_description</build_export_depend>
   <exec_depend>cv_bridge</exec_depend>
   <exec_depend>gazebo_ros</exec_depend>

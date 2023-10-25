@@ -7,11 +7,11 @@
 #include <move_base_msgs/MoveBaseGoal.h>
 #include <actionlib_msgs/GoalStatus.h>
 
-#include "Rossenheimer/Navigator.h"
-#include "Rossenheimer/Goal/Goal.h"
-#include "Rossenheimer/Goal/GoalBased.h"
-#include "Rossenheimer/Goal/GoalFire.h"
-#include "Rossenheimer/Goal/GoalFlood.h"
+#include "../include/Rossenheimer/Navigator.h"
+#include "../include/Rossenheimer/Goal/Goal.h"
+#include "../include/Rossenheimer/Goal/GoalBased.h"
+#include "../include/Rossenheimer/Goal/GoalFire.h"
+#include "../include/Rossenheimer/Goal/GoalFlood.h"
 
 Navigator::Navigator()
 {
@@ -27,17 +27,17 @@ void Navigator::SetGoal(double x, double y, double pose, int goalType)
 {    //what is the flag
     if (goalType == 0)
     {
-        GoalBased* BaseGoal = new GoalBased(x, y, pose);
+        BaseGoal = new GoalBased(x, y, pose);
         Goals.push_back(std::make_pair(BaseGoal, GoalNum));
     }
     else if (goalType == 1) //Fire
     {
-        GoalFire* FireGoal = new GoalFire(x, y, pose);
+        FireGoal = new GoalFire(x, y, pose);
         Goals.push_back(std::make_pair(FireGoal, GoalNum));
     }
     else if (goalType == 2) //Flood
     {
-        GoalFlood* FloodGoal = new GoalFlood(x, y, pose);
+        FloodGoal = new GoalFlood(x, y, pose);
         Goals.push_back(std::make_pair(FloodGoal, GoalNum));
     }
     else

@@ -1,8 +1,11 @@
 // Include corresponding header file
-#include "Rossenheimer/TurtleBot3.h"
+#include "../include/Rossenheimer/TurtleBot3.h"
 
 // Include packages
 #include <iostream>
+#include <nav_msgs/OccupancyGrid.h>
+#include <geometry_msgs/PoseStamped.h>
+#include <nav_msgs/Odometry.h>
 #include <ros/ros.h>
 
 //--TurtleBot3 Constructor Implementation----------------------------
@@ -27,7 +30,7 @@ TurtleBot3::TurtleBot3(ros::NodeHandle &nh_)
     path_marker.color.g = 0.0; // Green
     path_marker.color.b = 0.0; // Blue
     marker_pub = nh_.advertise<visualization_msgs::Marker>("path_marker", 10);
-   
+
 }
 
 //--TurtleBot3 Destructor Implementation----------------------------

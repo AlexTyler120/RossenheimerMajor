@@ -1,18 +1,23 @@
 #include <ros/ros.h>
 
-#include "Rossenheimer/Controller.h"
+#include "../include/Rossenheimer/Controller.h"
 
 Controller::Controller()
 {
     ROS_INFO("[CTor]: Controller");
     _Navigator = new Navigator();
-    _Navigator->SetGoal(0.0, 0.0, 0.0, 0); //initiate the starting position as the base to get resources from
-                                           //at point 0,0,0 pose 0, and type 0 which is base goal. will return here when needed
+    // Sensor* InitPose;
+    _Navigator->SetGoal(0.011736, 0.000749, -0.014901,0);
+    // _Navigator->SetGoal(InitPose->sensorGetData(2), InitPose->sensorGetData(3), InitPose->sensorGetData(1), 0); //initiate the starting position as the base to get resources from
+    //                                        //at point 0,0,0 pose 0, and type 0 which is base goal. will return here when needed
+    // ROS_INFO("Goal set to: %f, %f, %f", InitPose->sensorGetData(2), InitPose->sensorGetData(3), InitPose->sensorGetData(1));
+    
 }
 
 Controller::~Controller()
 {
     ROS_INFO("[DTor]: Controller");
+    delete _Navigator;
 }
 
 //-- Maze Solver Function --//
@@ -20,6 +25,7 @@ Controller::~Controller()
 void Controller::MazeSolver(Sensor* readLidar, Sensor* readOdometer, Motor* readMotor, Camera* readCamera)
 {
     std::cout << "TESTING MAZE SOLVER" << std::endl;
+    ROS_INFO("%f, %f, %f ", readOdometer->sensorGetData(2), readOdometer->sensorGetData(3), readOdometer->sensorGetData(1));
     turtlebot3_state_num = GET_TB3_DIRECTION;
 
     bool left_wall = readLidar->sensorGetData(LEFT) < PROXIMITY; //there is a wall to the left 0.3m away
@@ -41,50 +47,54 @@ void Controller::MazeSolver(Sensor* readLidar, Sensor* readOdometer, Motor* read
     }
     else if (!left_wall && !front_wall) //no walls are seen so go forward and left slightly looking for one
     {
-      turtlebot3_state_num = TB3_FIND_WALL;
+      //quick test to move to init goal
+      ROS_INFO("Moving to goal");
+      _Navigator->MoveToGoal(0);
+      ROS_INFO("Moved to goal");
+      //turtlebot3_state_num = TB3_FIND_WALL;
     }
-    else if (left_wall && !front_wall) // theres a wall to the left so follow it, might be following on a diagonal so will use too_close to adjust
-    {
-      turtlebot3_state_num = TB3_WALL_FOLLOW;
-    }
-    else //if there is a wall in front at all make a right turn
-    {
-      turtlebot3_state_num = TB3_RIGHT_TURN;
-    }
+    // else if (left_wall && !front_wall) // theres a wall to the left so follow it, might be following on a diagonal so will use too_close to adjust
+    // {
+    //   turtlebot3_state_num = TB3_WALL_FOLLOW;
+    // }
+    // else //if there is a wall in front at all make a right turn
+    // {
+    //   turtlebot3_state_num = TB3_RIGHT_TURN;
+    // }
 
 
 
-    switch(turtlebot3_state_num){ //switch case to determine current state of the turtlebot
+    // switch(turtlebot3_state_num){ //switch case to determine current state of the turtlebot
 
-      case TB3_FIND_WALL: //Wall finding state (veering left)
-        std::cout << "FINDING WALL" << std::endl;
-        findWall(readMotor);
-        break;
+    //   case TB3_FIND_WALL: //Wall finding state (veering left)
+    //     std::cout << "FINDING WALL" << std::endl;
+    //     findWall(readMotor);
+    //     break;
 
-      case TB3_RIGHT_TURN: //turning right state until parallel to wall
-        std::cout << "RIGHT TURN" << std::endl;
-        readOdometer->sensorSetData(readOdometer->sensorGetData(1));
-        rightTurn(readOdometer, readLidar, readMotor);
-        break;
+    //   case TB3_RIGHT_TURN: //turning right state until parallel to wall
+    //     std::cout << "RIGHT TURN" << std::endl;
+    //     readOdometer->sensorSetData(readOdometer->sensorGetData(1));
+    //     rightTurn(readOdometer, readLidar, readMotor);
+    //     break;
 
-      case TB3_WALL_FOLLOW: //following wall state to keep near parallel 
-        std::cout << "FOLLOWING WALL" << std::endl;
-        wallFollow(left_distance, readLidar, readOdometer, readMotor);
-        break;
+    //   case TB3_WALL_FOLLOW: //following wall state to keep near parallel 
+    //     std::cout << "FOLLOWING WALL" << std::endl;
+    //     wallFollow(left_distance, readLidar, readOdometer, readMotor);
+    //     break;
 
-      case TB3_APRIL_CENTER:
-        std::cout << "CENTERING" << std::endl;
-        centerTag(readCamera, readMotor, readLidar);
-        break;
+    //   case TB3_APRIL_CENTER:
+    //     std::cout << "CENTERING" << std::endl;
+    //     centerTag(readCamera, readMotor, readLidar);
+    //     break;
 
-      case TB3_STOP:
-        std::cout << "STOPPING" << std::endl;
-        readMotor->updateCommandVelocity(STATIONARY, STATIONARY);
+    //   case TB3_STOP:
+    //     std::cout << "STOPPING" << std::endl;
+    //     readMotor->updateCommandVelocity(STATIONARY, STATIONARY);
 
-      default:
-        std::cout << "GETTING TB3 DIRECTION" << std::endl;
-        break;
-    }
+    //   default:
+    //     std::cout << "GETTING TB3 DIRECTION" << std::endl;
+    //     break;
+    // }
 
     return;
 

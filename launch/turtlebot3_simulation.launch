@@ -3,6 +3,15 @@
   <arg name="name" default="turtlebot3"/>
 
   <param name="cmd_vel_topic_name" value="$(arg cmd_vel)"/>
+  
+  include file="$(find Rossenheimer)/launch/includes/description.launch.xml">
+    <arg name="model" value="$(arg model)" />
+  </include>
+  
+  <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+    <param name="publish_frequency" type="double" value="50.0" />
+    <param name="tf_prefix" value="$(arg multi_robot_name)"/>
+  </node>
 
   <!-- <node name="main" pkg="Rossenheimer" type="main" required="true" output="screen"/>
   <node name="movement" pkg="Rossenheimer" type="movement" required="true" output="screen"/> -->

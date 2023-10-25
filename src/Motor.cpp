@@ -1,5 +1,5 @@
 // Include header file for Motor class
-#include "Rossenheimer/Motor.h"
+#include "../include/Rossenheimer/Motor.h"
 
 // Include packages
 #include <ros/ros.h>

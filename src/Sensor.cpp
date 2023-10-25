@@ -2,7 +2,7 @@
 #include <ros/ros.h>    // include ros
 
 // Include header files
-#include "Rossenheimer/Sensors/Sensor.h"
+#include "../include/Rossenheimer/Sensors/Sensor.h"
 
 //--Sensor Constructor--
 Sensor::Sensor()
