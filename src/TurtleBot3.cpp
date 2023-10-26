@@ -17,7 +17,7 @@ TurtleBot3::TurtleBot3(ros::NodeHandle &nh_)
     TurtleBotSensors[ODOMETER_INDEX] = new Odometer(&nh_);
 
     _motor = new Motor(&nh_);           // construct Motor
-    _controller = new Controller(TurtleBotSensors[ODOMETER_INDEX]);     // construct Controller
+    _controller = new Controller(TurtleBotSensors[ODOMETER_INDEX], &nh_);     // construct Controller
     _camera = new Camera(nh_);        // construct Camera
 
     //to view in rviz
@@ -69,7 +69,7 @@ bool TurtleBot3::solveMaze(TurtleBot3* bot)
         // pass lidar, odometer and motor pointers into the algorithm of controller
         // _controller->MazeSolver(TurtleBotSensors[0], TurtleBotSensors[1], _motor, _camera);
         _controller->SaveWorld(TurtleBotSensors[LIDAR_INDEX],TurtleBotSensors[ODOMETER_INDEX], _motor, _camera);
-        updateTank(_controller->getDepots());
+        // updateTank(_controller->getDepots());
 
         addPathPoint();
         marker_pub.publish(path_marker);

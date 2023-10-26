@@ -28,22 +28,22 @@ enum
 
 class Navigator {
     public:
-        Navigator();
+        Navigator(ros::NodeHandle* nh_);
         ~Navigator();
         // void MoveToGoal(int GoalNum);
         void MoveToGoal(Goal* mvGoal);
-        void SetGoal(double x, double y, double pose, int goalType);  
         void SetGoal(int april_id, double x, double y, double orientation);
         void SortGoals();
         
-        void SetBase(double x, double y, double orientation);
+        void SetBase(double x, double y, double pose_z, double pose_w, int type, int id);
         Goal* GetBase();
         std::vector<Goal*> GetAddress();
         int* algorithm();
 
     private:
         
-        
+        // Create a publisher for the goal
+        ros::Publisher goal_pub;
         
         static const int numPriorities = 3;
 

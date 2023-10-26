@@ -32,7 +32,9 @@ void Odometer::sensorCallBack(const nav_msgs::Odometry::ConstPtr &msg)
 	double cosy = 1.0 - 2.0 * (msg->pose.pose.orientation.y * msg->pose.pose.orientation.y + msg->pose.pose.orientation.z * msg->pose.pose.orientation.z);
 
     odom_x = msg->pose.pose.position.x;
-    odom_y = msg->pose.pose.position.y;  
+    odom_y = msg->pose.pose.position.y; 
+    pose_z = msg->pose.pose.orientation.z;
+    pose_w = msg->pose.pose.orientation.w;
 
 	tb3_pose_= atan2(siny, cosy);
     
@@ -58,6 +60,10 @@ double Odometer::sensorGetData(int req){
             return odom_x;
         case 3: 
             return odom_y;
+        case 4:
+            return pose_z;
+        case 5:
+            return pose_w;
         default:
             return 0.0;
     }

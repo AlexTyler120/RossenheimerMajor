@@ -10,6 +10,7 @@
 #include <move_base_msgs/MoveBaseGoal.h>
 #include <actionlib_msgs/GoalStatus.h>
 
+
 enum
 {
     TYPE_BASE = 0,
@@ -21,18 +22,24 @@ class Goal
 {
     public:
         Goal();
-        Goal(double coord_x, double coord_y, double orientation, int type, int id);
+        Goal(double coord_x, double coord_y, double pose_z, double pose_w, int type, int id);
         virtual void actionTask() = 0; //
         ~Goal();
         int GetType();
-        move_base_msgs::MoveBaseGoal goal;
+        double GetPosition(int req);
     protected:
         bool status;
         double Target_x;
         double Target_y;
-        double Target_Orientation;
+        double Target_z = 0;
+        double Pose_x = 0;
+        double Pose_y = 0;
+        double Pose_z;
+        double Pose_w;
+
         int Target_type;
         int april_id;
+
 };
 
 #endif /* GOAL_H_ */

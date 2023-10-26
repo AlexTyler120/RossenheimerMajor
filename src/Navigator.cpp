@@ -15,10 +15,11 @@
 
 #include <vector>
 
-Navigator::Navigator()
+Navigator::Navigator(ros::NodeHandle* nh_)
 {
     // GoalNum = 0;
     ROS_INFO("Navigation object created");
+    goal_pub = nh_->advertise<geometry_msgs::PoseStamped>("move_base_simple/goal", 10);
 }
 Navigator::~Navigator()
 {
@@ -118,10 +119,10 @@ Goal* Navigator::GetBase()
   return BaseGoal;
 }
 
-void Navigator::SetBase(double x, double y, double orientation)
+void Navigator::SetBase(double x, double y, double pose_z, double pose_w, int type, int id)
 {
   ROS_INFO("FUKCING UNUONFKC NOIN .");
-  BaseGoal = new GoalBased(x, y, orientation, TYPE_BASE, 0);  
+  BaseGoal = new GoalBased(x, y, pose_z, pose_w, TYPE_BASE, 0);  
 }
 
 void Navigator::SetGoal(int april_id, double x, double y, double orientation)
@@ -190,28 +191,27 @@ void Navigator::SortGoals()
 // }
 
 void Navigator::MoveToGoal(Goal* mvGoal)
-{
-    actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> move_base("move_base", true);
+{  
+    ROS_INFO("MoveToGoal enterred.");
+    // Create a goal message
+    geometry_msgs::PoseStamped goal;
+    ROS_INFO("MGoal made.");
+    goal.header.frame_id = "map";
+    ROS_INFO("map header");
+    goal.header.stamp = ros::Time::now();
+    ROS_INFO("stamped");
+    // goal.pose.position.x = mvGoal->GetPosition()[0];
+    goal.pose.position.x = -1.0;
+    ROS_INFO("pos x made " );
+    goal.pose.position.y = mvGoal->GetPosition(1);
+    goal.pose.position.z = mvGoal->GetPosition(2);
+    goal.pose.orientation.x = mvGoal->GetPosition(3);
+    goal.pose.orientation.y = mvGoal->GetPosition(4);   
+    goal.pose.orientation.z = mvGoal->GetPosition(5);
+    goal.pose.orientation.w = mvGoal->GetPosition(6);
+    ROS_INFO("Goal instantiated");    
 
-    // Wait for the action server to come up
-    while (!move_base.waitForServer(ros::Duration(5.0)))
-    {
-      ROS_INFO("Waiting for the move_base action server to come up");
-    }
-
-    // Send the goal to move_base
-    move_base.sendGoal(mvGoal->goal); //move to that goal data
-
-    // Wait for move_base to complete the goal
-    move_base.waitForResult();
-
-    // Check if the goal was successful
-    if (move_base.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
-    {
-      ROS_INFO("Goal reached!");
-    }
-    else
-    {
-      ROS_INFO("Failed to reach goal");
-    }
+    // Publish the goal message
+    goal_pub.publish(goal);  
+    ROS_INFO("Goal publised");
 }

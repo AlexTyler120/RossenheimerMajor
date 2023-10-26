@@ -2,15 +2,15 @@
 
 #include "../include/Rossenheimer/Controller.h"
 
-Controller::Controller(Sensor* readOdometer)
+Controller::Controller(Sensor* readOdometer, ros::NodeHandle* nh_)
 {
     ROS_INFO("[CTor]: Controller");
-    _Navigator = new Navigator();
+    _Navigator = new Navigator(nh_);
     // Sensor* InitPose;
     int base_april = 0;
     ROS_INFO("MADE IT HERE.");
-    _Navigator->SetBase(readOdometer->sensorGetData(2), readOdometer->sensorGetData(3), readOdometer->sensorGetData(1));
-    
+    // _Navigator->SetBase(readOdometer->sensorGetData(2), readOdometer->sensorGetData(3), readOdometer->sensorGetData(1), );
+    _Navigator->SetBase(-1.89, 0.1077, 0, 1, TYPE_BASE, 0);
     count = 0;
     turtlebot3_state_num = TB3_MOVE_BASE;
 }
@@ -25,7 +25,7 @@ void Controller::frontierDetection(Camera* readCamera, Sensor* readLidar, Sensor
 {
   while (count < 125*80*500)
   {
-    ROS_INFO("Count: %d", count);
+    // ROS_INFO("Count: %d", count);
     double current_x;
     double current_y;
     double current_pose;
@@ -40,7 +40,7 @@ void Controller::frontierDetection(Camera* readCamera, Sensor* readLidar, Sensor
     else if (count/(125*80) == 1)
     {
       ROS_INFO("10s elapsed: setting current.");
-      count = 0;
+      // count = 0;
       current_x = readOdometer->sensorGetData(2);
       current_y = readOdometer->sensorGetData(3);
     }
@@ -55,7 +55,7 @@ void Controller::frontierDetection(Camera* readCamera, Sensor* readLidar, Sensor
       double odom_y = readOdometer->sensorGetData(3);
       double orientation = readOdometer->sensorGetData(1);
 
-      ROS_INFO("x: %f, y: %f, pose: %f", odom_x, odom_y, orientation);
+      // ROS_INFO("x: %f, y: %f, pose: %f", odom_x, odom_y, orientation);
     
       if (tag_detected && ((readCamera->getTagOffset() < 15) && (readCamera->getTagOffset() > -15)))  // TODO: fix magic numbers
       {

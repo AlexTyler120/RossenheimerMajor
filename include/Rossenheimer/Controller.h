@@ -46,7 +46,7 @@ class Controller
   
    public:
     //--Constructor--
-    Controller(Sensor* readOdometer); // default constructor
+    Controller(Sensor* readOdometer, ros::NodeHandle* nh_); // default constructo
 
     //--Destructor--
     ~Controller(); // default destructor
