@@ -15,11 +15,11 @@
 
 #include <vector>
 
-Navigator::Navigator(ros::NodeHandle* nh_)
+Navigator::Navigator(ros::NodeHandle& nh_)
 {
     // GoalNum = 0;
     ROS_INFO("Navigation object created");
-    goal_pub = nh_->advertise<geometry_msgs::PoseStamped>("move_base_simple/goal", 10);
+    goal_pub = nh_.advertise<geometry_msgs::PoseStamped>("move_base_simple/goal", 10);
 }
 Navigator::~Navigator()
 {

@@ -10,14 +10,17 @@
 
 //--TurtleBot3 Constructor Implementation----------------------------
 // Use dynamic memory to construct member objects within TurtleBot3
-TurtleBot3::TurtleBot3(ros::NodeHandle &nh_)
+TurtleBot3::TurtleBot3(ros::NodeHandle& nh_)
 {
     // construct Lidar, Odometer and Camera
-    TurtleBotSensors[LIDAR_INDEX] = new Lidar(&nh_);
-    TurtleBotSensors[ODOMETER_INDEX] = new Odometer(&nh_);
+    TurtleBotSensors[LIDAR_INDEX] = new Lidar(nh_);
+    TurtleBotSensors[ODOMETER_INDEX] = new Odometer(nh_);
+    // TurtleBotSensors[ODOMETER_INDEX] = new Odometer(&nh_);
+    // OdometerTest = new Odometer(nh_);
 
-    _motor = new Motor(&nh_);           // construct Motor
-    _controller = new Controller(TurtleBotSensors[ODOMETER_INDEX], &nh_);     // construct Controller
+    _motor = new Motor(nh_);           // construct Motor
+    // _controller = new Controller(TurtleBotSensors[ODOMETER_INDEX], &nh_);     // construct Controller
+    _controller = new Controller(TurtleBotSensors[ODOMETER_INDEX], nh_);
     _camera = new Camera(nh_);        // construct Camera
 
     //to view in rviz
@@ -58,19 +61,20 @@ void TurtleBot3::updateTank(int* depot_array)
 //--TurtleBot3 solveMaze Implementation------------------------------
 // Loop for ros to read data and determine appropriate manoeuvre
 // Call algorithm from controller of TurtleBot3
-bool TurtleBot3::solveMaze(TurtleBot3* bot)
+bool TurtleBot3::solveMaze()
 {
     ROS_INFO("ENTERED solveMaze");
-    _controller->frontierDetection(_camera,TurtleBotSensors[LIDAR_INDEX], TurtleBotSensors[ODOMETER_INDEX]);
+    // _controller->frontierDetection(_camera,TurtleBotSensors[LIDAR_INDEX], TurtleBotSensors[ODOMETER_INDEX]);
 
     ros::Rate loop_rate(125);   // set loop rate for ros
     while (ros::ok)             // establish loop for node to operate
     {
         // pass lidar, odometer and motor pointers into the algorithm of controller
         // _controller->MazeSolver(TurtleBotSensors[0], TurtleBotSensors[1], _motor, _camera);
-        _controller->SaveWorld(TurtleBotSensors[LIDAR_INDEX],TurtleBotSensors[ODOMETER_INDEX], _motor, _camera);
+        // _controller->SaveWorld(TurtleBotSensors[LIDAR_INDEX],TurtleBotSensors[ODOMETER_INDEX], _motor, _camera);
+        _controller->SaveWorld(TurtleBotSensors[LIDAR_INDEX], TurtleBotSensors[ODOMETER_INDEX], _motor, _camera);
         // updateTank(_controller->getDepots());
-
+        ROS_INFO("TURLEBOT SENSORS %f", TurtleBotSensors[ODOMETER_INDEX]->sensorGetData(1));
         addPathPoint();
         marker_pub.publish(path_marker);
 
@@ -95,6 +99,7 @@ void TurtleBot3::addPathPoint()
   point.x = getOdom(ODOM_X_INDEX);
   point.y = getOdom(ODOM_Y_INDEX);
   point.z = 0.0;
+
   path_marker.points.push_back(point);
   path_marker.header.frame_id = "map";
   path_marker.header.stamp = ros::Time::now();

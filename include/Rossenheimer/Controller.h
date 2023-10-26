@@ -46,7 +46,7 @@ class Controller
   
    public:
     //--Constructor--
-    Controller(Sensor* readOdometer, ros::NodeHandle* nh_); // default constructo
+    Controller(Sensor* readOdometer, ros::NodeHandle& nh_); // default constructo
 
     //--Destructor--
     ~Controller(); // default destructor
@@ -118,6 +118,8 @@ class Controller
 
     int* depot;
     int count;
+
+    // bool frontier_
     // Define global variables for map dimensions and exploration completion threshold
     int map_width = 0;
     int map_height = 0;

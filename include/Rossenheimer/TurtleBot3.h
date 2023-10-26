@@ -33,7 +33,7 @@ class TurtleBot3
 {
    public:
         //--Constructors and Destructors--
-        TurtleBot3(ros::NodeHandle &nh_);
+        TurtleBot3(ros::NodeHandle& nh_);
         ~TurtleBot3();
 
 
@@ -42,7 +42,7 @@ class TurtleBot3
         // to run the maze solving algorithm, and run necessary
         // manoeuvres and movements, depending on readings from the
         // Sensors.
-        bool solveMaze(TurtleBot3* bot);
+        bool solveMaze();
 
         void addPathPoint();       // add path point to vector
         double getOdom(int req);   // get odometer data
@@ -63,6 +63,8 @@ class TurtleBot3
           Motor* _motor;                              // pointer to motor (manipulate linear/angular velocity)
           Controller* _controller;                    // pointer to controller (brain/ algorithm of TurtleBot3)
           Camera* _camera;
+
+          // Odometer* OdometerTest;
 
           ros::Publisher marker_pub;                           // publisher for path
           visualization_msgs::Marker path_marker;

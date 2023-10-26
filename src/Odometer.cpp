@@ -12,9 +12,10 @@ Odometer::Odometer()
 {
     std::cout << "[CTor]: Odometer" << std::endl;
 }
-Odometer::Odometer(ros::NodeHandle* nh_)
+Odometer::Odometer(ros::NodeHandle& nh_)
 {
-    odom_sub_ = nh_->subscribe("odom", 10, &Odometer::sensorCallBack, this);
+    odom_sub_ = nh_.subscribe("odom", 10, &Odometer::sensorCallBack, this);
+    position_pub_ = nh_.advertise<geometry_msgs::Point>("robot_position", 10);
 
     tb3_pose_ = 0.0;
     prev_tb3_pose_ = 0.0;
@@ -37,6 +38,11 @@ void Odometer::sensorCallBack(const nav_msgs::Odometry::ConstPtr &msg)
     pose_w = msg->pose.pose.orientation.w;
 
 	tb3_pose_= atan2(siny, cosy);
+
+    geometry_msgs::Point position;
+    position.x = odom_x;
+    position.y = odom_y;
+    position_pub_.publish(position);
     
 }
 

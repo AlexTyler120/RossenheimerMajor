@@ -34,7 +34,7 @@ class Sensor
    public:
        //--Constructors and Destructors--
        Sensor();
-       Sensor(ros::NodeHandle* nh_);
+       Sensor(ros::NodeHandle& nh_);
        virtual ~Sensor();      // virtual destructor - redefined by child classes
 
 

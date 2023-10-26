@@ -23,7 +23,7 @@ class Lidar: public Sensor
    public:
        //--Constructors and Destructors--
        Lidar();
-       Lidar(ros::NodeHandle* nh_);
+       Lidar(ros::NodeHandle& nh_);
        ~Lidar();
 
        //--Functionality--

@@ -14,15 +14,15 @@ Motor::Motor()
 }
 
 //--Motor Constructor with Node Handle--
-Motor::Motor(ros::NodeHandle* nh_)
+Motor::Motor(ros::NodeHandle& nh_)
 {
     std::cout << "[CTor]: Motor" << std::endl;
 
     // establish name of topic for publishing command velocity
-    std::string cmd_vel_topic_name = nh_->param<std::string>("cmd_vel_topic_name", "");
+    std::string cmd_vel_topic_name = nh_.param<std::string>("cmd_vel_topic_name", "");
 
     // advertise the publisher for command velocity
-    cmd_vel_pub_ = nh_->advertise<geometry_msgs::Twist>(cmd_vel_topic_name, 10);
+    cmd_vel_pub_ = nh_.advertise<geometry_msgs::Twist>(cmd_vel_topic_name, 10);
 }
 
 //--Motor Destructor--

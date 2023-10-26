@@ -8,7 +8,9 @@
 #include <sensor_msgs/LaserScan.h>
 #include <geometry_msgs/Twist.h>
 #include <nav_msgs/Odometry.h>
+#include <geometry_msgs/Point.h>
 #include <nav_msgs/OccupancyGrid.h>
+#include <geometry_msgs/PoseWithCovariance.h>
 
 // Include the parent class header file
 #include "Sensor.h"
@@ -24,7 +26,7 @@ class Odometer: public Sensor
     public:
         //--Constructors and Destructors--
         Odometer();
-        Odometer(ros::NodeHandle* nh_);
+        Odometer(ros::NodeHandle& nh_);
         ~Odometer();
 
         //--Functionality--
@@ -49,6 +51,7 @@ class Odometer: public Sensor
 
     private:
         ros::Subscriber odom_sub_;
+        ros::Publisher position_pub_;
         double tb3_pose_;
         double prev_tb3_pose_;
 

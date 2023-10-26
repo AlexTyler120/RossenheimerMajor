@@ -39,6 +39,8 @@ double Goal::GetPosition(int req)
             return Pose_z;
         case 6:
             return Pose_w;
+        default:
+            return 0.0;
 
     }
 }

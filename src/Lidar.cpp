@@ -8,11 +8,11 @@ Lidar::Lidar()
 {
     std::cout << "Baited" << std::endl;
 }
-Lidar::Lidar(ros::NodeHandle* nh_)
+Lidar::Lidar(ros::NodeHandle& nh_)
 {
     // sensor_name = "scan";
 
-    laser_scan_sub_ = nh_->subscribe("scan", 10, &Lidar::sensorCallBack, this);
+    laser_scan_sub_ = nh_.subscribe("scan", 10, &Lidar::sensorCallBack, this);
 
     escape_range_       = 70.0 * DEG2RAD;  // 90 degrees for turns
     check_forward_dist_ = 0.2; // changed from 0.7
@@ -29,7 +29,7 @@ Lidar::~Lidar()
 void Lidar::sensorCallBack(const sensor_msgs::LaserScan::ConstPtr &msg)
 {
     uint16_t scan_angle[5] = {0, 90, 270, 75, 105}; //BACKLEFT and FRONTLEFT are each 15 degrees from the left position
-
+    ROS_INFO("NHSDJNFJS");
     for (int num = 0; num < 5; num++)
     {
         if (std::isinf(msg->ranges.at(scan_angle[num])))

@@ -16,7 +16,7 @@ class Motor
     public:
         //--Constructors and Destructors--
         Motor();
-        Motor(ros::NodeHandle* nh_);
+        Motor(ros::NodeHandle& nh_);
         ~Motor();
 
         //--Functionality--

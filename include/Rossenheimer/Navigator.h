@@ -28,7 +28,7 @@ enum
 
 class Navigator {
     public:
-        Navigator(ros::NodeHandle* nh_);
+        Navigator(ros::NodeHandle& nh_);
         ~Navigator();
         // void MoveToGoal(int GoalNum);
         void MoveToGoal(Goal* mvGoal);
