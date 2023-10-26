@@ -3,8 +3,11 @@
 
 #include <ros/ros.h>
 #include <geometry_msgs/Point.h>
+
+#include <geometry_msgs/PoseStamped.h>
 #include <actionlib/client/simple_action_client.h>
 #include <move_base_msgs/MoveBaseAction.h>
+
 #include <move_base_msgs/MoveBaseGoal.h>
 #include <actionlib_msgs/GoalStatus.h>
 
@@ -44,6 +47,7 @@ class Navigator {
         
         // Create a publisher for the goal
         ros::Publisher goal_pub;
+        actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> ac_;
         
         static const int numPriorities = 3;
 

@@ -15,11 +15,12 @@
 
 #include <vector>
 
-Navigator::Navigator(ros::NodeHandle& nh_)
+Navigator::Navigator(ros::NodeHandle& nh_): ac_("move_base", true)
 {
     // GoalNum = 0;
     ROS_INFO("Navigation object created");
     goal_pub = nh_.advertise<geometry_msgs::PoseStamped>("move_base_simple/goal", 10);
+    // goal_pub_ = nh.advertise<geometry_msgs::PoseStamped>("move_base_simple/goal", 10);
 }
 Navigator::~Navigator()
 {
@@ -201,10 +202,10 @@ void Navigator::MoveToGoal(Goal* mvGoal)
     goal.header.stamp = ros::Time::now();
     ROS_INFO("stamped");
     // goal.pose.position.x = mvGoal->GetPosition()[0];
-    goal.pose.position.x = -1.89343;
+    goal.pose.position.x = mvGoal->GetPosition(0);
     ROS_INFO("pos x made " );
     // goal.pose.position.y = mvGoal->GetPosition(1);
-    goal.pose.position.y = 0.107782;
+    goal.pose.position.y = mvGoal->GetPosition(1);
     goal.pose.position.z = mvGoal->GetPosition(2);
     goal.pose.orientation.x = mvGoal->GetPosition(3);
     goal.pose.orientation.y = mvGoal->GetPosition(4);   
@@ -216,4 +217,28 @@ void Navigator::MoveToGoal(Goal* mvGoal)
     // Publish the goal message
     goal_pub.publish(goal);  
     ROS_INFO("Goal publised");
+
+    // Wait for the action server to come up
+    while (!ac_.waitForServer(ros::Duration(5.0)))
+    {
+        ROS_INFO("Waiting for the move_base action server to come up");
+    }
+
+    // Send the goal to the action server
+    move_base_msgs::MoveBaseGoal mb_goal;
+    mb_goal.target_pose = goal;
+    ac_.sendGoal(mb_goal);
+
+    // Wait for the result
+    ac_.waitForResult();
+
+    // Check if the goal was reached
+    if (ac_.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+    {
+        ROS_INFO("The robot has reached the goal");
+    }
+    else
+    {
+        ROS_INFO("The robot failed to reach the goal");
+    }
 }

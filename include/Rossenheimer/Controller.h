@@ -9,6 +9,7 @@
 #include <std_msgs/Float32.h>
 
 
+
 // Include all necessary header files
 #include "Sensors/Sensor.h"
 #include "Sensors/Lidar.h"
@@ -24,13 +25,14 @@
 
 // enum:case structure for
 enum
-{   GET_TB3_DIRECTION = 0,
-    TB3_FIND_WALL,
-    TB3_RIGHT_TURN,
-    TB3_WALL_FOLLOW,
-    TB3_APRIL_CENTER,
-    TB3_STOP,
-    TB3_FRONTIER_DETECTION,
+{
+// {   GET_TB3_DIRECTION = 0,
+//     TB3_FIND_WALL,
+//     TB3_RIGHT_TURN,
+//     TB3_WALL_FOLLOW,
+//     TB3_APRIL_CENTER,
+//     TB3_STOP,
+    TB3_FRONTIER_DETECTION = 0,
     TB3_MOVE_BASE,
     TB3_MOVE_GOAL
 };
@@ -63,6 +65,8 @@ class Controller
     //--Functionality--
     
     double timer;
+
+    
     
     // findWall sets the TurtleBot3 on an arc trajectory leftward until a wall is found
     void findWall(Motor* readMotor);
