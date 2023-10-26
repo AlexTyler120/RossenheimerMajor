@@ -34,7 +34,8 @@ enum
 //     TB3_STOP,
     TB3_FRONTIER_DETECTION = 0,
     TB3_MOVE_BASE,
-    TB3_MOVE_GOAL
+    TB3_MOVE_GOAL,
+    TB3_END
 };
 
 
@@ -57,7 +58,7 @@ class Controller
       
     void SaveWorld(Sensor* readLidar, Sensor* readOdometer, Motor* readMotor, Camera* readCamera);
     
-    void frontierDetection(bool tag_detected, double tag_offset, int tagID, double coord_x, double coord_y, double orientation);
+    void frontierDetection(bool tag_detected, double tag_offset, int tagID, double px, double py, double pz, double ox, double oy, double oz, double ow);
 
     int* getDepots();
 

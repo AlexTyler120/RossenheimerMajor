@@ -8,7 +8,7 @@ class GoalBased : public Goal
 {
     public:
         GoalBased();
-        GoalBased(double coord_x, double coord_y, double pose_z, double pose_w, int type, int id);
+        GoalBased(double px, double py, double pz, double ox, double oy, double oz, double ow, int type, int id);
         void actionTask();
         ~GoalBased();
     private:

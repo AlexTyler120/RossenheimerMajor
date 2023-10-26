@@ -18,13 +18,27 @@
 Navigator::Navigator(ros::NodeHandle& nh_): ac_("move_base", true)
 {
     // GoalNum = 0;
-    ROS_INFO("Navigation object created");
+    ROS_INFO("[CTor]: Navigator.");
     goal_pub = nh_.advertise<geometry_msgs::PoseStamped>("move_base_simple/goal", 10);
     // goal_pub_ = nh.advertise<geometry_msgs::PoseStamped>("move_base_simple/goal", 10);
 }
 Navigator::~Navigator()
 {
-    ROS_INFO("Navigation object destroyed");
+    ROS_INFO("[DTor]: Navigator.");
+    delete BaseGoal;
+}
+
+bool Navigator::CheckPriorityBook()
+{
+  bool empty = true;
+  for (int i = 0; i < 3; i++)
+  {
+    if (_priorityBook[i].size() > 0)
+    {
+      empty = false;
+    }
+  }
+  return empty;
 }
 
 // void Navigator::SetGoal(double x, double y, double pose, int goalType)
@@ -57,7 +71,7 @@ void Navigator::algorithm()
   ROS_INFO("ENTERED: ALGORITHM");
   int resupply[2] = {0, 0};
   
-  ROS_INFO("_ids_pos size: %lu", _ids_pos.size());
+  ROS_INFO("_ids size: %lu", _ids.size());
   ROS_INFO("_priorityBook[0] size: %lu", _priorityBook[PRIORITY0].size());
   ROS_INFO("_priorityBook[1] size: %lu", _priorityBook[PRIORITY1].size());
   ROS_INFO("_priorityBook[2] size: %lu", _priorityBook[PRIORITY2].size());
@@ -136,33 +150,38 @@ Goal* Navigator::GetBase()
   return BaseGoal;
 }
 
-void Navigator::SetBase(double x, double y, double pose_z, double pose_w, int type, int id)
+void Navigator::SetBase(double px, double py, double pz, double ox, double oy, double oz, double ow, int type, int id)
 {
   ROS_INFO("FUKCING UNUONFKC NOIN .");
-  BaseGoal = new GoalBased(x, y, pose_z, pose_w, TYPE_BASE, 0);  
+  BaseGoal = new GoalBased(px, py, pz, ox, oy, oz, ow, type, id);  
 }
 
-void Navigator::SetGoal(int april_id, double x, double y, double orientation)
+void Navigator::SetGoal(int april_id, double x, double y, double z, double ox, double oy, double oz, double ow)
 {
-  _ids_pos.push_back(std::make_pair(april_id, std::make_pair(std::make_pair(x, y), orientation)));
-  ROS_INFO("Size of _ids_pos: %lu", _ids_pos.size());
+  // _ids_pos.push_back(std::make_pair(april_id, std::make_pair(std::make_pair(x, y), orientation)));
+  _ids.push_back(april_id);
+  _position.push_back({x, y, z});
+  _orientation.push_back({ox, oy, oz, ow});
+  ROS_INFO("Size of _ids: %lu", _ids.size());
 }
 
 void Navigator::PrintBook()
 {
-  // for (auto it: _priorityBook)
-  // {
-  //   ROS_INFO("")
-  // }
+  ROS_INFO("PRIO0-SIZE %lu", _priorityBook[PRIORITY0].size());
+  ROS_INFO("PRIO1-SIZE %lu", _priorityBook[PRIORITY1].size());
+  ROS_INFO("PRIO2-SIZE %lu", _priorityBook[PRIORITY2].size());
+  ROS_INFO("");
 }
 
 bool Navigator::findTag(int tag)
 {
+  ROS_INFO("ENTERED: FINDTAG");
   bool found = false;
-  for (auto it : _ids_pos)
+  for (int i = 0; i < _ids.size(); i++)
   {
-    if (it.first == tag)
+    if (_ids[i] == tag)
     {
+      ROS_INFO("FOUND MATCHING ID");
       found = true;
     }
   }
@@ -172,26 +191,54 @@ bool Navigator::findTag(int tag)
 void Navigator::SortGoals()
 {
   ROS_INFO("ENTERED: SortGoals");
-  for (auto it: _ids_pos)
+  for (int i = 0; i < _ids.size(); i++)
   {
+    ROS_INFO("Iter: %d", i);
+
     Goal* pGoal;
 
-    int ans = floor(it.first/100);              // priority of the incident
-    int temp_id = it.first - (100 * ans);       // id of the incident
+    int goal_id = _ids[i];
     
+    double point_x = _position[i][0];
+    double point_y = _position[i][1];
+    double point_z = _position[i][2];
+
+    double o_x = _orientation[i][0];
+    double o_y = _orientation[i][1];
+    double o_z = _orientation[i][2];
+    double o_w = _orientation[i][3];
+    
+    int ans = floor(_ids[i]/100);              // priority of the incident
+    int temp_id = _ids[i]- (100 * ans);       // id of the incident
+    
+
     if (temp_id <= 50)
     {
-      ROS_INFO("FIRE: PRIO: %d, ID: %d, ORIENTATION: %f, TYPE: %d", ans, temp_id, it.second.second, TYPE_FIRE);
-      pGoal = new GoalFire(it.second.first.first, it.second.first.second, it.second.second, TYPE_FIRE, temp_id);
+      // ROS_INFO("FIRE: PRIO %d, X: %f, Y: %f", ans, it.second.first.first, it.second.first.second);
+      // ROS_INFO("FIRE: PRIO: %d, ID: %d, ORIENTATION: %f, TYPE: %d", ans, temp_id, it.second.second, TYPE_FIRE);
+      pGoal = new GoalFire(point_x, point_y, point_z, o_x, o_y, o_z, o_w, TYPE_FIRE, temp_id);
     }
 
     else
-    {
-      ROS_INFO("FLOOD: PRIO: %d, ID: %d, ORIENTATION: %f, TYPE: %d", ans, temp_id, it.second.second, TYPE_FLOOD);
-      pGoal = new GoalFlood(it.second.first.first, it.second.first.second, it.second.second, TYPE_FLOOD, temp_id);
+    { 
+      // ROS_INFO("FLOOD: PRIO %d, X: %f, Y: %f", ans, it.second.first.first, it.second.first.second);
+
+      // ROS_INFO("FLOOD: PRIO: %d, ID: %d, ORIENTATION: %f, TYPE: %d", ans, temp_id, it.second.second, TYPE_FLOOD);
+      pGoal = new GoalFlood(point_x, point_y, point_z, o_x, o_y, o_z, o_w, TYPE_FIRE, temp_id);
     }  
 
     _priorityBook[ans].push_back(pGoal);      
+  }
+
+  for (int i= 0; i < _priorityBook.size(); i++)
+  {
+    for (int j = 0; j < _priorityBook[i].size(); j++)
+    {
+      double x = _priorityBook[i][j]->GetPosition(0);
+      double y =  _priorityBook[i][j]->GetPosition(1);
+      int Type = _priorityBook[i][j]->GetPosition(7);
+      ROS_INFO("Prio: %d, Elem: %d, X: %f, Y: %f, Type: %d", i, j, x, y, Type);
+    }
   }
 }
 

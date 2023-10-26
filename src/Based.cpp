@@ -2,17 +2,21 @@
 
 #include "../include/Rossenheimer/Goal/GoalBased.h"
 
-GoalBased::GoalBased(double coord_x, double coord_y, double pose_z, double pose_w, int type, int id)
+GoalBased::GoalBased(double px, double py, double pz, double ox, double oy, double oz, double ow, int type, int id)
 {
     ROS_INFO("[CTor]: Based");
     ROS_INFO("OH SHIT GOAL CREATED OH NO.");
     ROS_INFO("Goal Created");
     status = true;
 
-    Target_x = coord_x;
-    Target_y = coord_y;
-    Pose_z = pose_z;
-    Pose_w = pose_w;
+    Target_x = px;
+    Target_y = py;
+    Target_z = pz;
+    Pose_x = ox;
+    Pose_y = oy;
+    Pose_z = oz;
+    Pose_w = ow;
+    
     Target_type = type;
     april_id = id;
 }

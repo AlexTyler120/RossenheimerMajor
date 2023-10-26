@@ -52,11 +52,15 @@ class Odometer: public Sensor
     private:
         ros::Subscriber odom_sub_;
         ros::Publisher position_pub_;
+        ros::Publisher orientation_pub;
         double tb3_pose_;
         double prev_tb3_pose_;
 
         double odom_x;
         double odom_y;
+        double odom_z;
+        double pose_x;
+        double pose_y;
         double pose_z;
         double pose_w;
         

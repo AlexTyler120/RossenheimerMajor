@@ -35,10 +35,12 @@ class Navigator {
         ~Navigator();
         // void MoveToGoal(int GoalNum);
         void MoveToGoal(Goal* mvGoal);
-        void SetGoal(int april_id, double x, double y, double orientation);
+        void SetGoal(int april_id, double x, double y, double z, double ox, double oy, double oz, double ow);
         void SortGoals();
         
-        void SetBase(double x, double y, double pose_z, double pose_w, int type, int id);
+        void SetBase(double px, double py, double pz, double ox, double oy, double oz, double ow, int type, int id);
+
+        bool CheckPriorityBook();
         Goal* GetBase();
         void PrintBook();
         std::vector<Goal*> GetAddress();
@@ -55,7 +57,11 @@ class Navigator {
 
         // std::vector<std::pair< Goal *, int>> Goals;
 
-        std::vector< std::pair<int, std::pair<std::pair<double, double>, double>>> _ids_pos;
+        // std::vector< std::pair<int, std::pair<std::pair<double, double>, double>>> _ids_pos;
+        std::vector< int > _ids;
+        std::vector< std::array< double, 3 >> _position;
+        std::vector < std::array< double, 4 >> _orientation;
+        
         std::array< std::vector <Goal *>, numPriorities> _priorityBook;
         std::vector < Goal * > addresses;
         GoalBased* BaseGoal;

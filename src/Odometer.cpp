@@ -16,6 +16,7 @@ Odometer::Odometer(ros::NodeHandle& nh_)
 {
     odom_sub_ = nh_.subscribe("odom", 10, &Odometer::sensorCallBack, this);
     position_pub_ = nh_.advertise<geometry_msgs::Point>("robot_position", 10);
+    orientation_pub = nh_.advertise<geometry_msgs::Quaternion>("robot_orientation", 10);
 
     tb3_pose_ = 0.0;
     prev_tb3_pose_ = 0.0;
@@ -34,6 +35,10 @@ void Odometer::sensorCallBack(const nav_msgs::Odometry::ConstPtr &msg)
 
     odom_x = msg->pose.pose.position.x;
     odom_y = msg->pose.pose.position.y; 
+    odom_z = msg->pose.pose.position.z;
+
+    pose_x = msg->pose.pose.orientation.x;
+    pose_y = msg->pose.pose.orientation.y;
     pose_z = msg->pose.pose.orientation.z;
     pose_w = msg->pose.pose.orientation.w;
 
@@ -42,7 +47,17 @@ void Odometer::sensorCallBack(const nav_msgs::Odometry::ConstPtr &msg)
     geometry_msgs::Point position;
     position.x = odom_x;
     position.y = odom_y;
+    position.z = odom_z;
+    
+    geometry_msgs::Quaternion orientation;
+    orientation.x = pose_x;
+    orientation.y = pose_y;
+    orientation.z = pose_z;
+    orientation.w = pose_w;
+
+
     position_pub_.publish(position);
+    orientation_pub.publish(orientation);
     
 }
 
@@ -60,16 +75,31 @@ double Odometer::sensorGetData(int req){
     {
         case 0:
             return prev_tb3_pose_;
+            break;
         case 1:
             return tb3_pose_;
+            break;
         case 2:
             return odom_x;
+            break;
         case 3: 
             return odom_y;
+            break;
         case 4:
-            return pose_z;
+            return odom_z;
+            break;
         case 5:
+            return pose_x;
+            break;
+        case 6:
+            return pose_y;
+            break;
+        case 7:
+            return pose_z;
+            break;
+        case 8:
             return pose_w;
+            break;
         default:
             return 0.0;
     }

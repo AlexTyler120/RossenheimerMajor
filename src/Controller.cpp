@@ -9,8 +9,17 @@ Controller::Controller(Sensor* readOdometer, ros::NodeHandle& nh_)
     // Sensor* InitPose;
     int base_april = 0;
     ROS_INFO("MADE IT HERE.");
-    // _Navigator->SetBase(readOdometer->sensorGetData(2), readOdometer->sensorGetData(3), readOdometer->sensorGetData(1), );
-    _Navigator->SetBase(-1.89, 0.1077, 0.0, 1.0, TYPE_BASE, 0);
+ 
+    double px = readOdometer->sensorGetData(2);
+    double py = readOdometer->sensorGetData(3);
+    double pz = readOdometer->sensorGetData(4);
+    double ox = readOdometer->sensorGetData(5);
+    double oy = readOdometer->sensorGetData(6);
+    double oz = readOdometer->sensorGetData(7);
+    double ow = readOdometer->sensorGetData(8);
+
+
+    _Navigator->SetBase(0.0001, 0.0001, pz, 0.0, 0.0, 1.0, 0.0, TYPE_BASE, -1);
 
     turtlebot3_state_num = TB3_FRONTIER_DETECTION;
 
@@ -23,7 +32,7 @@ Controller::~Controller()
     delete _Navigator;
 }
 
-void Controller::frontierDetection(bool tag_detected, double tag_offset, int tagID, double coord_x, double coord_y, double orientation)
+void Controller::frontierDetection(bool tag_detected, double tag_offset, int tagID, double px, double py, double pz, double ox, double oy, double oz, double ow)
 {
     // ROS_INFO("5s elapsed: setting previous.");
 // 
@@ -33,21 +42,16 @@ void Controller::frontierDetection(bool tag_detected, double tag_offset, int tag
   
     if (tag_detected && ((tag_offset < 15) && (tag_offset> -15)))  // TODO: fix magic numbers
     {
-      if (tagID != prev_tagID)
-      {
-        ROS_INFO("PREV TAG NOT FOUND");
-        odom_saved = false;
-        prev_tagID = tagID;
-      }
 
-      else if (!_Navigator->findTag(tagID))
+      if (!_Navigator->findTag(tagID))
       {
           ROS_INFO("CREATING NEW TAG");
-          _Navigator->SetGoal(tagID, coord_x, coord_y, orientation);
+          
+          _Navigator->SetGoal(tagID, px, py, pz, ox, oy, oz, ow);
           odom_saved = true;
 
           // Print the tag ID and stored values for debugging
-          ROS_INFO("Tag ID %d: odom_x = %f, odom_y = %f", tagID, coord_x, coord_y);
+          // ROS_INFO("Tag ID %d: odom_x = %f, odom_y = %f", tagID, coord_x, coord_y);
       }
 
       else
@@ -56,7 +60,6 @@ void Controller::frontierDetection(bool tag_detected, double tag_offset, int tag
       }
 
     }
-    // ROS_INFO("There's something inside you");
   return;
 }
 
@@ -67,11 +70,20 @@ void Controller::SaveWorld(Sensor* readLidar, Sensor* readOdometer, Motor* readM
   {
     case TB3_FRONTIER_DETECTION:
 
-      if (ros::Time::now().toSec() - timer < 150.0 )
+      if (ros::Time::now().toSec() - timer < 90.0 )
       {
-          // ROS_INFO("ROSTIME NOW: %f", ros::Time::now().toSec() - timer);
+          bool tagDetect = readCamera->getTagDetected();
+          bool tagOffset = readCamera->getTagOffset();
+          int tagID = readCamera->getTagID();
+          double px = readOdometer->sensorGetData(2);
+          double py = readOdometer->sensorGetData(3);
+          double pz = readOdometer->sensorGetData(4);
+          double ox = readOdometer->sensorGetData(5);
+          double oy = readOdometer->sensorGetData(6);
+          double oz = readOdometer->sensorGetData(7);
+          double ow = readOdometer->sensorGetData(8);
 
-          frontierDetection(readCamera->getTagDetected(), readCamera->getTagOffset(), readCamera->getTagID(), readOdometer->sensorGetData(2), readOdometer->sensorGetData(3), readOdometer->sensorGetData(1));
+          frontierDetection(tagDetect, tagOffset, tagID, px, py, pz, ox, oy, oz, ow);
 
       }
       else
@@ -95,13 +107,24 @@ void Controller::SaveWorld(Sensor* readLidar, Sensor* readOdometer, Motor* readM
       for (auto it: _Navigator->GetAddress())
       {
         _Navigator->MoveToGoal(it);
+        // it.erase();
       }
       _Navigator->GetAddress().clear();
+      ROS_INFO("ADDRESSES SIZE POST ALGO: %lu", _Navigator->GetAddress().size());
 
       turtlebot3_state_num = TB3_MOVE_BASE;
-
-      
+      if (_Navigator->CheckPriorityBook())
+      {
+        turtlebot3_state_num = TB3_END;
+      }
       break;
+
+      case TB3_END:
+        _Navigator->MoveToGoal(_Navigator->GetBase());  
+        ROS_INFO("WORLD SAVED");
+        _Navigator->PrintBook();
+
+        break;   
   }
 }
 

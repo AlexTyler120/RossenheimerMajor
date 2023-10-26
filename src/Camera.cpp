@@ -26,7 +26,7 @@ Camera::~Camera()
 
 void Camera::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 {
-  ROS_INFO("Image incoming");
+  // ROS_INFO("Image incoming");
   cv_bridge::CvImagePtr cvPointer;
 
   try

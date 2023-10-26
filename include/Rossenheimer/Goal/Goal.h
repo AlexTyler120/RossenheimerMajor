@@ -22,7 +22,7 @@ class Goal
 {
     public:
         Goal();
-        Goal(double coord_x, double coord_y, double pose_z, double pose_w, int type, int id);
+        Goal(double px, double py, double pz, double ox, double oy, double oz, double ow, int type, int id);
         virtual void actionTask() = 0; //
         ~Goal();
         int GetType();
@@ -31,9 +31,9 @@ class Goal
         bool status;
         double Target_x;
         double Target_y;
-        double Target_z = 0;
-        double Pose_x = 0;
-        double Pose_y = 0;
+        double Target_z;
+        double Pose_x;
+        double Pose_y;
         double Pose_z;
         double Pose_w;
 

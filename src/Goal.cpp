@@ -6,17 +6,18 @@ Goal::Goal()
     ROS_INFO("Goal Created.");
     
 }
-Goal::Goal(double coord_x, double coord_y, double pose_z, double pose_w, int type, int id){
+Goal::Goal(double px, double py, double pz, double ox, double oy, double oz, double ow, int type, int id){
     ROS_INFO("OH SHIT GOAL CREATED OH NO.");
     ROS_INFO("Goal Created");
-    status = true;
-  
-    
+    Target_x = px;
+    Target_y = py;
+    Target_z = pz;
 
-    Target_x = coord_x;
-    Target_y = coord_y;
-    Pose_z = pose_z;
-    Pose_w = pose_w;
+    Pose_x = ox;
+    Pose_y = oy;
+    Pose_z = oz;
+    Pose_w = ow;
+    
     Target_type = type;
     april_id = id;
 }
@@ -39,6 +40,10 @@ double Goal::GetPosition(int req)
             return Pose_z;
         case 6:
             return Pose_w;
+        case 7:
+            return Target_type;
+        case 8:
+            return april_id;
         default:
             return 0.0;
 
