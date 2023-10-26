@@ -26,14 +26,14 @@ enum
 {
     PRIORITY0 = 0,
     PRIORITY1,
-    PRIORITY2
+    PRIORITY2,
+    BASE
 };
 
 class Navigator {
     public:
         Navigator(ros::NodeHandle& nh_);
         ~Navigator();
-        // void MoveToGoal(int GoalNum);
         void MoveToGoal(Goal* mvGoal);
         void SetGoal(int april_id, double x, double y, double z, double ox, double oy, double oz, double ow);
         void SortGoals();
@@ -53,7 +53,7 @@ class Navigator {
         ros::Publisher goal_pub;
         actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> ac_;
         
-        static const int numPriorities = 3;
+        // static const int numPriorities = 4;
 
         // std::vector<std::pair< Goal *, int>> Goals;
 
@@ -62,7 +62,7 @@ class Navigator {
         std::vector< std::array< double, 3 >> _position;
         std::vector < std::array< double, 4 >> _orientation;
         
-        std::array< std::vector <Goal *>, numPriorities> _priorityBook;
+        std::array< std::vector <Goal *>, (BASE + 1)> _priorityBook;
         std::vector < Goal * > addresses;
         Goal* BaseGoal;
 

@@ -95,14 +95,15 @@ void Controller::SaveWorld(Sensor* readLidar, Sensor* readOdometer, Motor* readM
      
     case TB3_MOVE_BASE:
       ROS_INFO("ENTERED TB3_MOVE_BASSE.");
-      _Navigator->MoveToGoal(_Navigator->GetBase());      // returns to base
-      ROS_INFO("ACHIEVED: TO BASE");
+      _Navigator->MoveToGoal(_Navigator->GetBase());
+
+
       _Navigator->algorithm();                            // determins what items to pick up and route (addresses)
       turtlebot3_state_num = TB3_MOVE_GOAL;
       break;
 
     case TB3_MOVE_GOAL:
-      ROS_INFO("REACHED TB3 Move to Goal.");
+      // ROS_INFO("REACHED TB3 Move to Goal.");
      
       for (auto it: _Navigator->GetAddress())
       {

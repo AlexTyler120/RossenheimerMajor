@@ -85,8 +85,8 @@ void Navigator::algorithm()
     // resupply[_priorityBook[PRIORITY0].front()->GetType() - 1] = 3;
     // ROS_INFO("ALGO: ENTERED TO PRIO_BOOK");'
     ROS_INFO("Goal Type: %d", _priorityBook[PRIORITY0].front()->GetType());
-
-    _priorityBook[PRIORITY0].erase(_priorityBook[PRIORITY0].begin());
+    // delete _priorityBook[PRIORITY0].front();
+    _priorityBook[PRIORITY0].erase(_priorityBook[PRIORITY0].begin(), _priorityBook[PRIORITY0].begin()+1);
     ROS_INFO("ALGO: ERASED PRIO-0");
 
     // ROS_INFO("Priority 0: Task Set");
@@ -99,7 +99,8 @@ void Navigator::algorithm()
     
     // resupply[_priorityBook[PRIORITY1].front()->GetType() - 1] += 2;
     // ROS_INFO("ALGO: ENTERED TO PRIO_BOOK");
-    _priorityBook[PRIORITY1].erase(_priorityBook[PRIORITY1].begin());
+    // delete _priorityBook[PRIORITY1].front();
+    _priorityBook[PRIORITY1].erase(_priorityBook[PRIORITY1].begin(), _priorityBook[PRIORITY1].begin()+1);
     ROS_INFO("ALGO: ERASED PRIO-1");
 
 
@@ -107,7 +108,8 @@ void Navigator::algorithm()
     {
       addresses.push_back(_priorityBook[PRIORITY2].front());
       // resupply[_priorityBook[PRIORITY2].front()->GetType() - 1] += 1;
-      _priorityBook[PRIORITY2].erase(_priorityBook[PRIORITY2].begin());
+      // delete _priorityBook[PRIORITY2].front();
+      _priorityBook[PRIORITY2].erase(_priorityBook[PRIORITY2].begin(), _priorityBook[PRIORITY2].begin()+1);
 
     }
   }
@@ -120,7 +122,8 @@ void Navigator::algorithm()
       {
         addresses.push_back(_priorityBook[PRIORITY2].front());
         // resupply[_priorityBook[PRIORITY2][i]->GetType() -1] += 1;
-        _priorityBook[PRIORITY2].erase(_priorityBook[PRIORITY2].begin());
+        // delete _priorityBook[PRIORITY2].front();
+        _priorityBook[PRIORITY2].erase(_priorityBook[PRIORITY2].begin(), _priorityBook[PRIORITY2].begin()+1);
 
       }
     }
@@ -131,7 +134,7 @@ void Navigator::algorithm()
       {
         addresses.push_back(_priorityBook[PRIORITY2].front());
         // resupply[_priorityBook[PRIORITY2][i]->GetType() -1] += 1;
-        _priorityBook[PRIORITY2].erase(_priorityBook[PRIORITY2].begin());
+        _priorityBook[PRIORITY2].erase(_priorityBook[PRIORITY2].begin(), _priorityBook[PRIORITY2].begin()+2);
       }
     }
   }
@@ -147,13 +150,15 @@ std::vector<Goal*> Navigator::GetAddress()
 }
 Goal* Navigator::GetBase()
 {
-  return BaseGoal;
+  return _priorityBook[BASE].front();
+  // return BaseGoal;
 }
 
 void Navigator::SetBase(double px, double py, double pz, double ox, double oy, double oz, double ow, int type, int id)
 {
   ROS_INFO("FUKCING UNUONFKC NOIN .");
-  BaseGoal = new GoalBased(px, py, pz, ox, oy, oz, ow, type, id);  
+  Goal* base = new GoalBased(px, py, pz, ox, oy, oz, ow, type, id);
+  _priorityBook[BASE].push_back(base); 
 }
 
 void Navigator::SetGoal(int april_id, double x, double y, double z, double ox, double oy, double oz, double ow)
@@ -230,7 +235,7 @@ void Navigator::SortGoals()
     _priorityBook[ans].push_back(pGoal);      
   }
 
-  for (int i= 0; i < _priorityBook.size(); i++)
+  for (int i= 0; i < BASE; i++)
   {
     for (int j = 0; j < _priorityBook[i].size(); j++)
     {
