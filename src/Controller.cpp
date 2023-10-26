@@ -10,7 +10,7 @@ Controller::Controller(Sensor* readOdometer, ros::NodeHandle& nh_)
     int base_april = 0;
     ROS_INFO("MADE IT HERE.");
     // _Navigator->SetBase(readOdometer->sensorGetData(2), readOdometer->sensorGetData(3), readOdometer->sensorGetData(1), );
-    _Navigator->SetBase(-1.89, 0.1077, 0, 1, TYPE_BASE, 0);
+    _Navigator->SetBase(-1.89, 0.1077, 0.0, 1.0, TYPE_BASE, 0);
     count = 0;
     actual_count = 0;
     turtlebot3_state_num = TB3_FRONTIER_DETECTION;
@@ -33,7 +33,7 @@ void Controller::frontierDetection(bool tag_detected, double tag_offset, int tag
   
     if (tag_detected && ((tag_offset < 15) && (tag_offset> -15)))  // TODO: fix magic numbers
     {
-      if (tagID != prev_tag_ID)
+      if (tagID != prev_tagID)
       {
         odom_saved = false;
         prev_tagID = tagID;
@@ -64,7 +64,7 @@ void Controller::SaveWorld(Sensor* readLidar, Sensor* readOdometer, Motor* readM
   {
     case TB3_FRONTIER_DETECTION:
 
-      if (ros::Time::now().toSec() - timer < 220.0 )
+      if (ros::Time::now().toSec() - timer < 200.0 )
       {
           ROS_INFO("ROSTIME NOW: %f", ros::Time::now().toSec() - timer);
 
@@ -75,6 +75,7 @@ void Controller::SaveWorld(Sensor* readLidar, Sensor* readOdometer, Motor* readM
       else
       {
         _Navigator->SortGoals();                            // sorts all goals from april tags
+        for (auto it: )
         turtlebot3_state_num = TB3_MOVE_BASE;
       }
       break;
@@ -82,22 +83,22 @@ void Controller::SaveWorld(Sensor* readLidar, Sensor* readOdometer, Motor* readM
     case TB3_MOVE_BASE:
       ROS_INFO("ENTERED TB3_MOVE_BASSE.");
       _Navigator->MoveToGoal(_Navigator->GetBase());      // returns to base
+      ROS_INFO("ACHIEVED: TO BASE");
       _Navigator->algorithm();                            // determins what items to pick up and route (addresses)
+      turtlebot3_state_num = TB3_MOVE_GOAL;
       break;
 
     case TB3_MOVE_GOAL:
       ROS_INFO("REACHED TB3 Move to Goal.");
-      
-      if(_Navigator->GetAddress().size() > 0)
+     
+      for (auto it: _Navigator->GetAddress())
       {
-        _Navigator->MoveToGoal(_Navigator->GetAddress().front());
-        _Navigator->GetAddress().erase(_Navigator->GetAddress().begin());
+        _Navigator->MoveToGoal(it);
       }
-
-      else
-      {
+      // else
+      // {
         turtlebot3_state_num = TB3_MOVE_BASE;
-      }
+      // }
       
       break;
   }

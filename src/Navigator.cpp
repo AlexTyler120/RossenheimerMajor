@@ -131,12 +131,18 @@ void Navigator::SetGoal(int april_id, double x, double y, double orientation)
   _ids_pos.push_back(std::make_pair(april_id, std::make_pair(std::make_pair(x, y), orientation)));
 }
 
+void Navigator::PrintBook()
+{
+  // for (auto it: _priorityBook)
+  // {
+  //   ROS_INFO("")
+  // }
+}
 void Navigator::SortGoals()
 {
-
+  ROS_INFO("ENTERED: SortGoals");
   for (auto it: _ids_pos)
   {
-    
     Goal* pGoal;
 
     int ans = floor(it.first/100);              // priority of the incident
@@ -144,11 +150,13 @@ void Navigator::SortGoals()
     
     if (temp_id <= 50)
     {
+      ROS_INFO("FIRE: PRIO: %d, ID: %d, ORIENTATION: %f, TYPE: %d", ans, temp_id, it.second.second, TYPE_FIRE);
       pGoal = new GoalFire(it.second.first.first, it.second.first.second, it.second.second, TYPE_FIRE, temp_id);
     }
 
     else
     {
+      ROS_INFO("FLOOD: PRIO: %d, ID: %d, ORIENTATION: %f, TYPE: %d", ans, temp_id, it.second.second, TYPE_FLOOD);
       pGoal = new GoalFlood(it.second.first.first, it.second.first.second, it.second.second, TYPE_FLOOD, temp_id);
     }  
 

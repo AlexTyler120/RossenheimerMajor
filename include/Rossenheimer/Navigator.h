@@ -40,6 +40,7 @@ class Navigator {
         
         void SetBase(double x, double y, double pose_z, double pose_w, int type, int id);
         Goal* GetBase();
+        void PrintBook();
         std::vector<Goal*> GetAddress();
         int* algorithm();
 
