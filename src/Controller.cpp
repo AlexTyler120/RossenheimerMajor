@@ -63,6 +63,11 @@ void Controller::frontierDetection(Camera* readCamera, Sensor* readLidar, Sensor
       // reading in distance from april tag to center of camera
       double tag_offset = readCamera->getTagOffset();
 
+      double odom_x = readOdometer->sensorGetData(2);   // TODO: fix floating numbers, define in .h and remove definition in TurtleBot.h
+      double odom_y = readOdometer->sensorGetData(3);
+      double orientation = readOdometer->sensorGetData(1);
+
+      ROS_INFO("x: %f, y: %f, pose: %f", odom_x, odom_y, orientation);
     
       if (tag_detected && ((readCamera->getTagOffset() < 15) && (readCamera->getTagOffset() > -15)))  // TODO: fix magic numbers
       {
