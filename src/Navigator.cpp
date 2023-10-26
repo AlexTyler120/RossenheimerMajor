@@ -201,14 +201,16 @@ void Navigator::MoveToGoal(Goal* mvGoal)
     goal.header.stamp = ros::Time::now();
     ROS_INFO("stamped");
     // goal.pose.position.x = mvGoal->GetPosition()[0];
-    goal.pose.position.x = -1.0;
+    goal.pose.position.x = -1.89343;
     ROS_INFO("pos x made " );
-    goal.pose.position.y = mvGoal->GetPosition(1);
+    // goal.pose.position.y = mvGoal->GetPosition(1);
+    goal.pose.position.y = 0.107782;
     goal.pose.position.z = mvGoal->GetPosition(2);
     goal.pose.orientation.x = mvGoal->GetPosition(3);
     goal.pose.orientation.y = mvGoal->GetPosition(4);   
     goal.pose.orientation.z = mvGoal->GetPosition(5);
-    goal.pose.orientation.w = mvGoal->GetPosition(6);
+    // goal.pose.orientation.w = mvGoal->GetPosition(6);
+    goal.pose.orientation.w = 0.309662;
     ROS_INFO("Goal instantiated");    
 
     // Publish the goal message

@@ -23,28 +23,27 @@ Controller::~Controller()
 
 void Controller::frontierDetection(Camera* readCamera, Sensor* readLidar, Sensor* readOdometer)
 {
-  while (count < 125*80*500)
-  {
+  while(true){
     // ROS_INFO("Count: %d", count);
     double current_x;
     double current_y;
     double current_pose;
 
-    if (count/(125*40) == 1)
-    {
-      ROS_INFO("5s elapsed: setting previous.");
-      prev_x = readOdometer->sensorGetData(2);
-      prev_y = readOdometer->sensorGetData(3);
-    }
+    ROS_INFO("5s elapsed: setting previous.");
+    prev_x = readOdometer->sensorGetData(2);
+    prev_y = readOdometer->sensorGetData(3);
 
-    else if (count/(125*80) == 1)
-    {
-      ROS_INFO("10s elapsed: setting current.");
-      // count = 0;
-      current_x = readOdometer->sensorGetData(2);
-      current_y = readOdometer->sensorGetData(3);
-    }
+    ros::Rate rate(0.75);
+    rate.sleep();
 
+    if (fabs(readOdometer->sensorGetData(2) - prev_x) < 0.1 && fabs(readOdometer->sensorGetData(3) - prev_y) < 0.1)
+    {
+      ROS_INFO("NOT MOVING, DISTANCE: %f, %f",fabs(readOdometer->sensorGetData(2) - prev_x), fabs(readOdometer->sensorGetData(3) - prev_y));
+    }
+    else
+    {
+      ROS_INFO("MOVING, DISTANCE: %f, %f",fabs(readOdometer->sensorGetData(2) - prev_x), fabs(readOdometer->sensorGetData(3) - prev_y));
+    }
     
       bool tag_detected = readCamera->getTagDetected(); // reading in if a tag is detected
 
@@ -102,21 +101,27 @@ void Controller::frontierDetection(Camera* readCamera, Sensor* readLidar, Sensor
         // }
       }
       count++;
-    }
     
+  }
     ROS_INFO("There's something inside you");
     return;
-  // }
-}
+  }
 
 void Controller::SaveWorld(Sensor* readLidar, Sensor* readOdometer, Motor* readMotor, Camera* readCamera)
 {
   switch(turtlebot3_state_num)
   {
     case TB3_MOVE_BASE:
-      _Navigator->MoveToGoal(_Navigator->GetBase());
+      while(fabs(readOdometer->sensorGetData(2) - _Navigator->GetBase()->GetPosition(0) > 0.05 && fabs(readOdometer->sensorGetData(3) - _Navigator->GetBase()->GetPosition(1)) > 0.05))
+      {
+        _Navigator->MoveToGoal(_Navigator->GetBase());
+      }
       depot = _Navigator->algorithm();
-      turtlebot3_state_num = TB3_MOVE_GOAL;
+      // turtlebot3_state_num = TB3_MOVE_GOAL;
+      while(true)
+      {
+
+      }
       break;
 
     case TB3_MOVE_GOAL:
