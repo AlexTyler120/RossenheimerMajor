@@ -93,25 +93,31 @@ void Controller::SaveWorld(Sensor* readLidar, Sensor* readOdometer, Motor* readM
       }
       else
       {
+        _Navigator->SortGoals();                            // sorts all goals from april tags
         turtlebot3_state_num = TB3_MOVE_BASE;
       }
       break;
      
     case TB3_MOVE_BASE:
       ROS_INFO("ENTERED TB3_MOVE_BASSE.");
-      _Navigator->MoveToGoal(_Navigator->GetBase());
-        
+      _Navigator->MoveToGoal(_Navigator->GetBase());      // returns to base
+      _Navigator->algorithm();                            // determins what items to pick up and route (addresses)
       break;
 
     case TB3_MOVE_GOAL:
       ROS_INFO("REACHED TB3 Move to Goal.");
-      // while (_Navigator->GetAddress().size() > 0)
-      // {
-      //   _Navigator->MoveToGoal(_Navigator->GetAddress().front());
-      //   _Navigator->GetAddress().front()->actionTask();
-      //   _Navigator->GetAddress().erase(_Navigator->GetAddress().begin());
-      // }
-      // turtlebot3_state_num = TB3_MOVE_BASE;
+      
+      if(_Navigator->GetAddress().size() > 0)
+      {
+        _Navigator->MoveToGoal(_Navigator->GetAddress().front());
+        _Navigator->GetAddress().erase(_Navigator->GetAddress().begin());
+      }
+
+      else
+      {
+        turtlebot3_state_num = TB3_MOVE_BASE;
+      }
+      
       break;
   }
 }

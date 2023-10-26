@@ -55,12 +55,12 @@ Navigator::~Navigator()
 int* Navigator::algorithm()
 {
   int* resupply = new int[2];
-  resupply[0] = 0;
-  resupply[1] = 0;
+  resupply[0] = 0;      // fire items to stock on turtlebot
+  resupply[1] = 0;      // flood items to stock on turtlebot 
 
   if (_priorityBook[PRIORITY0].size() > 0)
   {
-    objectives.push_back(_priorityBook[PRIORITY0].front());
+    addresses.push_back(_priorityBook[PRIORITY0].front());
     resupply[_priorityBook[PRIORITY0].front()->GetType() - 1] = 3;
     _priorityBook[PRIORITY0].erase(_priorityBook[PRIORITY0].begin());
 
@@ -69,13 +69,13 @@ int* Navigator::algorithm()
 
   else if (_priorityBook[PRIORITY1].size() > 0)
   {
-     objectives.push_back(_priorityBook[PRIORITY1].front());
+     addresses.push_back(_priorityBook[PRIORITY1].front());
     resupply[_priorityBook[PRIORITY1].front()->GetType() - 1] += 2;
     _priorityBook[PRIORITY1].erase(_priorityBook[PRIORITY1].begin());
 
     if (_priorityBook[PRIORITY2].size() > 0)
     {
-      objectives.push_back(_priorityBook[PRIORITY2].front());
+      addresses.push_back(_priorityBook[PRIORITY2].front());
       resupply[_priorityBook[PRIORITY2].front()->GetType() - 1] += 1;
       _priorityBook[PRIORITY2].erase(_priorityBook[PRIORITY2].begin());
 
@@ -88,7 +88,7 @@ int* Navigator::algorithm()
     {
       for (int i = 0; i < 3; i++)
       {
-        objectives.push_back(_priorityBook[PRIORITY2].front());
+        addresses.push_back(_priorityBook[PRIORITY2].front());
         resupply[_priorityBook[PRIORITY2][i]->GetType() -1] += 1;
         _priorityBook[PRIORITY2].erase(_priorityBook[PRIORITY2].begin());
 
@@ -99,7 +99,7 @@ int* Navigator::algorithm()
     {
       for (int i = 0; i < _priorityBook[PRIORITY2].size(); i++)
       {
-        objectives.push_back(_priorityBook[PRIORITY2].front());
+        addresses.push_back(_priorityBook[PRIORITY2].front());
         resupply[_priorityBook[PRIORITY2][i]->GetType() -1] += 1;
         _priorityBook[PRIORITY2].erase(_priorityBook[PRIORITY2].begin());
       }
@@ -112,7 +112,7 @@ int* Navigator::algorithm()
 
 std::vector<Goal*> Navigator::GetAddress()
 {
-  return objectives;
+  return addresses;
 
 }
 Goal* Navigator::GetBase()
