@@ -64,7 +64,7 @@ class Navigator {
         
         std::array< std::vector <Goal *>, numPriorities> _priorityBook;
         std::vector < Goal * > addresses;
-        GoalBased* BaseGoal;
+        Goal* BaseGoal;
 
         // int addresses[3] = {0, 0, 0};
 

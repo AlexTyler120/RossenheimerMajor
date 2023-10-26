@@ -170,7 +170,7 @@ void Navigator::PrintBook()
   ROS_INFO("PRIO0-SIZE %lu", _priorityBook[PRIORITY0].size());
   ROS_INFO("PRIO1-SIZE %lu", _priorityBook[PRIORITY1].size());
   ROS_INFO("PRIO2-SIZE %lu", _priorityBook[PRIORITY2].size());
-  ROS_INFO("");
+  // ROS_INFO("");
 }
 
 bool Navigator::findTag(int tag)

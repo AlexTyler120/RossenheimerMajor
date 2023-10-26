@@ -19,7 +19,7 @@ Controller::Controller(Sensor* readOdometer, ros::NodeHandle& nh_)
     double ow = readOdometer->sensorGetData(8);
 
 
-    _Navigator->SetBase(0.0001, 0.0001, pz, 0.0, 0.0, 1.0, 0.0, TYPE_BASE, -1);
+    _Navigator->SetBase(-1.89, 0.1077, 0.0001, 0.0, 0.0, 0.0, 1.0, TYPE_BASE, -1);
 
     turtlebot3_state_num = TB3_FRONTIER_DETECTION;
 
@@ -70,7 +70,7 @@ void Controller::SaveWorld(Sensor* readLidar, Sensor* readOdometer, Motor* readM
   {
     case TB3_FRONTIER_DETECTION:
 
-      if (ros::Time::now().toSec() - timer < 90.0 )
+      if (ros::Time::now().toSec() - timer < 200.0)
       {
           bool tagDetect = readCamera->getTagDetected();
           bool tagOffset = readCamera->getTagOffset();
@@ -112,10 +112,14 @@ void Controller::SaveWorld(Sensor* readLidar, Sensor* readOdometer, Motor* readM
       _Navigator->GetAddress().clear();
       ROS_INFO("ADDRESSES SIZE POST ALGO: %lu", _Navigator->GetAddress().size());
 
-      turtlebot3_state_num = TB3_MOVE_BASE;
+      
       if (_Navigator->CheckPriorityBook())
       {
         turtlebot3_state_num = TB3_END;
+      }
+      else
+      {
+        turtlebot3_state_num = TB3_MOVE_BASE;
       }
       break;
 
@@ -123,7 +127,7 @@ void Controller::SaveWorld(Sensor* readLidar, Sensor* readOdometer, Motor* readM
         _Navigator->MoveToGoal(_Navigator->GetBase());  
         ROS_INFO("WORLD SAVED");
         _Navigator->PrintBook();
-
+        ros::shutdown();
         break;   
   }
 }
