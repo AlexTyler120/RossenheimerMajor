@@ -82,7 +82,6 @@ bool TurtleBot3::solveMaze()
 
         loop_rate.sleep();      // sleep rate
     }
-
 }
 
 //--TurtleBot3 getOdom Implementation--------------------------------

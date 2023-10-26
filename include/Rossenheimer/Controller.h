@@ -55,15 +55,15 @@ class Controller
       
     void SaveWorld(Sensor* readLidar, Sensor* readOdometer, Motor* readMotor, Camera* readCamera);
     
-    void frontierDetection(Camera* readCamera, Sensor* readLidar, Sensor* readOdometer);
+    void frontierDetection(bool tag_detected, double tag_offset, int tagID, double coord_x, double coord_y, double orientation);
 
     int* getDepots();
 
    private:
     //--Functionality--
     
+    double timer;
     
-
     // findWall sets the TurtleBot3 on an arc trajectory leftward until a wall is found
     void findWall(Motor* readMotor);
 
@@ -111,13 +111,16 @@ class Controller
 
     double FLAG_IN_CENTER  = 30.0;
 
-
     double prev_x;
     double prev_y;
     double prev_pose;
 
     int* depot;
     int count;
+    int actual_count;
+
+    bool frontier;
+    bool moving;
 
     // bool frontier_
     // Define global variables for map dimensions and exploration completion threshold

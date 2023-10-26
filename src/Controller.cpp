@@ -12,7 +12,11 @@ Controller::Controller(Sensor* readOdometer, ros::NodeHandle& nh_)
     // _Navigator->SetBase(readOdometer->sensorGetData(2), readOdometer->sensorGetData(3), readOdometer->sensorGetData(1), );
     _Navigator->SetBase(-1.89, 0.1077, 0, 1, TYPE_BASE, 0);
     count = 0;
-    turtlebot3_state_num = TB3_MOVE_BASE;
+    actual_count = 0;
+    turtlebot3_state_num = TB3_FRONTIER_DETECTION;
+    frontier = true;
+    moving = true;
+    timer = ros::Time::now().toSec();
 }
 
 Controller::~Controller()
@@ -21,50 +25,22 @@ Controller::~Controller()
     delete _Navigator;
 }
 
-void Controller::frontierDetection(Camera* readCamera, Sensor* readLidar, Sensor* readOdometer)
+void Controller::frontierDetection(bool tag_detected, double tag_offset, int tagID, double coord_x, double coord_y, double orientation)
 {
-    // ROS_INFO("Count: %d", count);
-    double current_x;
-    double current_y;
-    double current_pose;
-
     ROS_INFO("5s elapsed: setting previous.");
-    prev_x = readOdometer->sensorGetData(2);
-    prev_y = readOdometer->sensorGetData(3);
 
-    ROS_INFO("%f, %f", prev_x, prev_y);
-    ros::Rate rate(0.25);
-    rate.sleep();
 
-    if (fabs(readOdometer->sensorGetData(2) - prev_x) < 0.1 && fabs(readOdometer->sensorGetData(3) - prev_y) < 0.1)
+    ROS_INFO("PREVX: %f, PREV Y: %f", coord_x, coord_y);
+  
+    if (tag_detected && ((tag_offset < 15) && (tag_offset> -15)))  // TODO: fix magic numbers
     {
-      ROS_INFO("NOT MOVING, DISTANCE: %f, %f",fabs(readOdometer->sensorGetData(2) - prev_x), fabs(readOdometer->sensorGetData(3) - prev_y));
+
+
+      _Navigator->SetGoal(tagID, coord_x, coord_y, orientation);
     }
-    else
-    {
-      ROS_INFO("MOVING, DISTANCE: %f, %f",fabs(readOdometer->sensorGetData(2) - prev_x), fabs(readOdometer->sensorGetData(3) - prev_y));
-    }
-    
-      bool tag_detected = readCamera->getTagDetected(); // reading in if a tag is detected
-
-      // reading in distance from april tag to center of camera
-      double tag_offset = readCamera->getTagOffset();
-
-      double odom_x = readOdometer->sensorGetData(2);   // TODO: fix floating numbers, define in .h and remove definition in TurtleBot.h
-      double odom_y = readOdometer->sensorGetData(3);
-      double orientation = readOdometer->sensorGetData(1);
-
-      // ROS_INFO("x: %f, y: %f, pose: %f", odom_x, odom_y, orientation);
-    
-      if (tag_detected && ((readCamera->getTagOffset() < 15) && (readCamera->getTagOffset() > -15)))  // TODO: fix magic numbers
-      {
-        int tag_ID = readCamera->getTagID();
-        double odom_x = readOdometer->sensorGetData(2);   // TODO: fix floating numbers, define in .h and remove definition in TurtleBot.h
-        double odom_y = readOdometer->sensorGetData(3);
-        double orientation = readOdometer->sensorGetData(1);
-
-        _Navigator->SetGoal(tag_ID, odom_x, odom_y, orientation);
-        
+    ROS_INFO("There's something inside you");
+  return;
+}
         // if (tag_ID != prev_tag_ID)
         
         // {
@@ -98,20 +74,34 @@ void Controller::frontierDetection(Camera* readCamera, Sensor* readLidar, Sensor
         // {
         //   // If the tag ID is not found, print an error message
         //   ROS_INFO("Tag ID %d not found in tag_positions map", tag_ID);
-        // }
-      }
-    
-    ROS_INFO("There's something inside you");
-    return;
-  }
+        //}
 
 void Controller::SaveWorld(Sensor* readLidar, Sensor* readOdometer, Motor* readMotor, Camera* readCamera)
 {
-
-  ROS_INFO("%f, %f, %f", readOdometer->sensorGetData(2), readOdometer->sensorGetData(3), readOdometer->sensorGetData(1));
+  
   switch(turtlebot3_state_num)
   {
+    case TB3_FRONTIER_DETECTION:
+
+      if (ros::Time::now().toSec() - timer < 240.0 )
+      {
+          ROS_INFO("ROSTIME NOW: %f", ros::Time::now().toSec() - timer);
+
+          frontierDetection(readCamera->getTagDetected(), readCamera->getTagOffset(), readCamera->getTagID(), readOdometer->sensorGetData(2), readOdometer->sensorGetData(3), readOdometer->sensorGetData(1));
+          count ++;
+          ROS_INFO("COUNT: %d", count);
+      }
+      else
+      {
+        turtlebot3_state_num = TB3_MOVE_BASE;
+      }
+      
+     
     case TB3_MOVE_BASE:
+      // while 
+      ROS_INFO("ENTERED TB3_MOVE_BASSE.");
+      _Navigator->MoveToGoal(_Navigator->GetBase());
+      // turtlebot3_state_num = TB3_MOVE_GOAL;
       // while(fabs(readOdometer->sensorGetData(2) - _Navigator->GetBase()->GetPosition(0) > 0.05 && fabs(readOdometer->sensorGetData(3) - _Navigator->GetBase()->GetPosition(1)) > 0.05))
       // {
       //   _Navigator->MoveToGoal(_Navigator->GetBase());
@@ -125,13 +115,14 @@ void Controller::SaveWorld(Sensor* readLidar, Sensor* readOdometer, Motor* readM
       break;
 
     case TB3_MOVE_GOAL:
-      while (_Navigator->GetAddress().size() > 0)
-      {
-        _Navigator->MoveToGoal(_Navigator->GetAddress().front());
-        _Navigator->GetAddress().front()->actionTask();
-        _Navigator->GetAddress().erase(_Navigator->GetAddress().begin());
-      }
-      turtlebot3_state_num = TB3_MOVE_BASE;
+      ROS_INFO("REACHED TB3 Move to Goal.");
+      // while (_Navigator->GetAddress().size() > 0)
+      // {
+      //   _Navigator->MoveToGoal(_Navigator->GetAddress().front());
+      //   _Navigator->GetAddress().front()->actionTask();
+      //   _Navigator->GetAddress().erase(_Navigator->GetAddress().begin());
+      // }
+      // turtlebot3_state_num = TB3_MOVE_BASE;
       break;
   }
 }
