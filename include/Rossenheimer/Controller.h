@@ -92,6 +92,7 @@ class Controller
     std::map<int, std::pair<double, double>> tag_positions;  // map with tag ID as key, odom x and y as pair of values
 
     bool odom_saved = false;  // flag to check if odometer values have been saved
+    int prev_tagID;           // variable to store previous tag ID
 
     int prev_tag_ID = -1;
 

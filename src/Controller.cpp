@@ -29,52 +29,33 @@ void Controller::frontierDetection(bool tag_detected, double tag_offset, int tag
 {
     ROS_INFO("5s elapsed: setting previous.");
 
-
     ROS_INFO("PREVX: %f, PREV Y: %f", coord_x, coord_y);
   
     if (tag_detected && ((tag_offset < 15) && (tag_offset> -15)))  // TODO: fix magic numbers
     {
+      if (tagID != prev_tag_ID)
+      {
+        odom_saved = false;
+        prev_tagID = tagID;
+      }
+      
+      auto it = tag_positions.find(tagID);
 
+      if (!odom_saved)
+      {
+        if (it == tag_positions.end())
+        {
+          _Navigator->SetGoal(tagID, coord_x, coord_y, orientation);
+          odom_saved = true;
 
-      _Navigator->SetGoal(tagID, coord_x, coord_y, orientation);
+          // Print the tag ID and stored values for debugging
+          ROS_INFO("Tag ID %d: odom_x = %f, odom_y = %f", tagID, coord_x, coord_y);
+        }
+      }
     }
     ROS_INFO("There's something inside you");
   return;
 }
-        // if (tag_ID != prev_tag_ID)
-        
-        // {
-        //   odom_saved = false;
-        //   prev_tag_ID = tag_ID;
-        // }
-        
-        // auto it = tag_positions.find(tag_ID);
-
-        // if (!odom_saved)
-        // {
-        //   if (it == tag_positions.end())
-        //   {
-        //     tag_positions[tag_ID] = std::make_pair(odom_x, odom_y);
-        //     odom_saved = true;
-
-        //     // Print the tag ID and stored values for debugging
-        //     ROS_INFO("Tag ID %d: odom_x = %f, odom_y = %f", tag_ID, odom_x, odom_y);
-        //   }
-        // }
-        // if (it != tag_positions.end())
-        // {
-        //   // If the tag ID is found, retrieve the stored values
-        //   double map_odom_x = it->second.first;
-        //   double map_odom_y = it->second.second;
-
-        //   // Print the tag ID and stored values for debugging
-        //   ROS_INFO("Tag ID %d: odom_x = %f, odom_y = %f", tag_ID, map_odom_x, map_odom_y);
-        // }
-        // else
-        // {
-        //   // If the tag ID is not found, print an error message
-        //   ROS_INFO("Tag ID %d not found in tag_positions map", tag_ID);
-        //}
 
 void Controller::SaveWorld(Sensor* readLidar, Sensor* readOdometer, Motor* readMotor, Camera* readCamera)
 {
