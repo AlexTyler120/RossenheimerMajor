@@ -5,6 +5,8 @@
 
 // Include ros
 #include <ros/ros.h>
+#include <nav_msgs/OccupancyGrid.h>
+#include <std_msgs/Float32.h>
 
 
 // Include all necessary header files
@@ -116,6 +118,10 @@ class Controller
 
     int* depot;
     int count;
+    // Define global variables for map dimensions and exploration completion threshold
+    int map_width = 0;
+    int map_height = 0;
+    const float completion_threshold = 0.95;  // Adjust this based on your requirements
 };
 
 

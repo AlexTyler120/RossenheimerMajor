@@ -81,10 +81,10 @@ void Camera::imageCallback(const sensor_msgs::ImageConstPtr& msg)
     int centerX = imageWidth / 2;
     double dx = cx - centerX;
     m_tag_offset = dx;
-    ROS_INFO("Horizontal distance from center: %f", dx);
+    // ROS_INFO("Horizontal distance from center: %f", dx);
   }
 
-  ROS_INFO("Tag detected: %d", m_tag_detected);
+  // ROS_INFO("Tag detected: %d", m_tag_detected);
 
   cv::imshow("Detected Markers", outputImage);
   cv::waitKey(1);
