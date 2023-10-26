@@ -52,31 +52,47 @@ Navigator::~Navigator()
     
 // }
 
-int* Navigator::algorithm()
+void Navigator::algorithm()
 {
-  int* resupply = new int[2];
-  resupply[0] = 0;      // fire items to stock on turtlebot
-  resupply[1] = 0;      // flood items to stock on turtlebot 
+  ROS_INFO("ENTERED: ALGORITHM");
+  int resupply[2] = {0, 0};
+  
+  ROS_INFO("_ids_pos size: %lu", _ids_pos.size());
+  ROS_INFO("_priorityBook[0] size: %lu", _priorityBook[PRIORITY0].size());
+  ROS_INFO("_priorityBook[1] size: %lu", _priorityBook[PRIORITY1].size());
+  ROS_INFO("_priorityBook[2] size: %lu", _priorityBook[PRIORITY2].size());
+
 
   if (_priorityBook[PRIORITY0].size() > 0)
   {
+    
     addresses.push_back(_priorityBook[PRIORITY0].front());
-    resupply[_priorityBook[PRIORITY0].front()->GetType() - 1] = 3;
-    _priorityBook[PRIORITY0].erase(_priorityBook[PRIORITY0].begin());
+    ROS_INFO("ALGO: PUSHEDBACK PRIO-0");
+    // resupply[_priorityBook[PRIORITY0].front()->GetType() - 1] = 3;
+    // ROS_INFO("ALGO: ENTERED TO PRIO_BOOK");'
+    ROS_INFO("Goal Type: %d", _priorityBook[PRIORITY0].front()->GetType());
 
-    ROS_INFO("Priority 0: Task Set");
+    _priorityBook[PRIORITY0].erase(_priorityBook[PRIORITY0].begin());
+    ROS_INFO("ALGO: ERASED PRIO-0");
+
+    // ROS_INFO("Priority 0: Task Set");
   }
 
   else if (_priorityBook[PRIORITY1].size() > 0)
   {
-     addresses.push_back(_priorityBook[PRIORITY1].front());
-    resupply[_priorityBook[PRIORITY1].front()->GetType() - 1] += 2;
+    addresses.push_back(_priorityBook[PRIORITY1].front());
+    ROS_INFO("ALGO: PUSHEDBACK PRIO-1");
+    
+    // resupply[_priorityBook[PRIORITY1].front()->GetType() - 1] += 2;
+    // ROS_INFO("ALGO: ENTERED TO PRIO_BOOK");
     _priorityBook[PRIORITY1].erase(_priorityBook[PRIORITY1].begin());
+    ROS_INFO("ALGO: ERASED PRIO-1");
+
 
     if (_priorityBook[PRIORITY2].size() > 0)
     {
       addresses.push_back(_priorityBook[PRIORITY2].front());
-      resupply[_priorityBook[PRIORITY2].front()->GetType() - 1] += 1;
+      // resupply[_priorityBook[PRIORITY2].front()->GetType() - 1] += 1;
       _priorityBook[PRIORITY2].erase(_priorityBook[PRIORITY2].begin());
 
     }
@@ -89,7 +105,7 @@ int* Navigator::algorithm()
       for (int i = 0; i < 3; i++)
       {
         addresses.push_back(_priorityBook[PRIORITY2].front());
-        resupply[_priorityBook[PRIORITY2][i]->GetType() -1] += 1;
+        // resupply[_priorityBook[PRIORITY2][i]->GetType() -1] += 1;
         _priorityBook[PRIORITY2].erase(_priorityBook[PRIORITY2].begin());
 
       }
@@ -100,13 +116,13 @@ int* Navigator::algorithm()
       for (int i = 0; i < _priorityBook[PRIORITY2].size(); i++)
       {
         addresses.push_back(_priorityBook[PRIORITY2].front());
-        resupply[_priorityBook[PRIORITY2][i]->GetType() -1] += 1;
+        // resupply[_priorityBook[PRIORITY2][i]->GetType() -1] += 1;
         _priorityBook[PRIORITY2].erase(_priorityBook[PRIORITY2].begin());
       }
     }
   }
 
-  return resupply;
+  return;
   
 }
 
@@ -129,6 +145,7 @@ void Navigator::SetBase(double x, double y, double pose_z, double pose_w, int ty
 void Navigator::SetGoal(int april_id, double x, double y, double orientation)
 {
   _ids_pos.push_back(std::make_pair(april_id, std::make_pair(std::make_pair(x, y), orientation)));
+  ROS_INFO("Size of _ids_pos: %lu", _ids_pos.size());
 }
 
 void Navigator::PrintBook()
@@ -137,6 +154,20 @@ void Navigator::PrintBook()
   // {
   //   ROS_INFO("")
   // }
+}
+
+bool Navigator::findTag(int tag)
+{
+  bool found = false;
+  for (auto it : _ids_pos)
+  {
+    if (it.first == tag)
+    {
+      found = true;
+    }
+  }
+
+  return found;
 }
 void Navigator::SortGoals()
 {
@@ -164,67 +195,33 @@ void Navigator::SortGoals()
   }
 }
 
-// void Navigator::MoveToGoal(int GoalNum)
-// {  
-//   for (int i = 0; i < Goals.size(); i++)
-//   {
-//     if (Goals[i].second == GoalNum) // find specific goal
-//     {
-//       // Create a MoveBaseClient object
-//     actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> move_base("move_base", true);
-
-//     // Wait for the action server to come up
-//     while (!move_base.waitForServer(ros::Duration(5.0)))
-//     {
-//       ROS_INFO("Waiting for the move_base action server to come up");
-//     }
-
-//     // Send the goal to move_base
-//     move_base.sendGoal(Goals[i].first->goal); //move to that goal data
-
-//     // Wait for move_base to complete the goal
-//     move_base.waitForResult();
-
-//     // Check if the goal was successful
-//     if (move_base.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
-//     {
-//       ROS_INFO("Goal reached!");
-//     }
-//     else
-//     {
-//       ROS_INFO("Failed to reach goal");
-//     }
-//     }
-//   }
-
-// }
 
 void Navigator::MoveToGoal(Goal* mvGoal)
 {  
-    ROS_INFO("MoveToGoal enterred.");
+    // ROS_INFO("MoveToGoal enterred.");
     // Create a goal message
     geometry_msgs::PoseStamped goal;
-    ROS_INFO("MGoal made.");
+    // ROS_INFO("MGoal made.");
     goal.header.frame_id = "map";
-    ROS_INFO("map header");
+    // ROS_INFO("map header");
     goal.header.stamp = ros::Time::now();
-    ROS_INFO("stamped");
+    // ROS_INFO("stamped");
     // goal.pose.position.x = mvGoal->GetPosition()[0];
     goal.pose.position.x = mvGoal->GetPosition(0);
-    ROS_INFO("pos x made " );
+    // ROS_INFO("pos x made " );
     // goal.pose.position.y = mvGoal->GetPosition(1);
     goal.pose.position.y = mvGoal->GetPosition(1);
     goal.pose.position.z = mvGoal->GetPosition(2);
     goal.pose.orientation.x = mvGoal->GetPosition(3);
     goal.pose.orientation.y = mvGoal->GetPosition(4);   
     goal.pose.orientation.z = mvGoal->GetPosition(5);
-    // goal.pose.orientation.w = mvGoal->GetPosition(6);
-    goal.pose.orientation.w = 0.309662;
-    ROS_INFO("Goal instantiated");    
+    goal.pose.orientation.w = mvGoal->GetPosition(6);
+    // goal.pose.orientation.w = 0.309662;
+    // ROS_INFO("Goal instantiated");    
 
     // Publish the goal message
     goal_pub.publish(goal);  
-    ROS_INFO("Goal publised");
+    // ROS_INFO("Goal publised");
 
     // Wait for the action server to come up
     while (!ac_.waitForServer(ros::Duration(5.0)))

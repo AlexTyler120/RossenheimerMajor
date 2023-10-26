@@ -74,7 +74,7 @@ bool TurtleBot3::solveMaze()
         // _controller->SaveWorld(TurtleBotSensors[LIDAR_INDEX],TurtleBotSensors[ODOMETER_INDEX], _motor, _camera);
         _controller->SaveWorld(TurtleBotSensors[LIDAR_INDEX], TurtleBotSensors[ODOMETER_INDEX], _motor, _camera);
         // updateTank(_controller->getDepots());
-        ROS_INFO("TURLEBOT SENSORS %f", TurtleBotSensors[ODOMETER_INDEX]->sensorGetData(1));
+        // ROS_INFO("TURLEBOT SENSORS %f", TurtleBotSensors[ODOMETER_INDEX]->sensorGetData(1));
         addPathPoint();
         marker_pub.publish(path_marker);
 

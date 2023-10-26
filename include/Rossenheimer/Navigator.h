@@ -42,7 +42,8 @@ class Navigator {
         Goal* GetBase();
         void PrintBook();
         std::vector<Goal*> GetAddress();
-        int* algorithm();
+        void algorithm();
+        bool findTag(int tag);
 
     private:
         

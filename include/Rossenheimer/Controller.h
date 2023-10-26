@@ -89,7 +89,7 @@ class Controller
     //--Private Member Variables--
     uint8_t turtlebot3_state_num;        // variable to store case for algorithm
 
-    std::map<int, std::pair<double, double>> tag_positions;  // map with tag ID as key, odom x and y as pair of values
+    // std::map<int, std::pair<double, double>> tag_positions;  // map with tag ID as key, odom x and y as pair of values
 
     bool odom_saved = false;  // flag to check if odometer values have been saved
     // int prev_tagID;           // variable to store previous tag ID
@@ -121,13 +121,7 @@ class Controller
     double prev_pose;
 
     int* depot;
-    int count;
-    int actual_count;
 
-    bool frontier;
-    bool moving;
-
-    // bool frontier_
     // Define global variables for map dimensions and exploration completion threshold
     int map_width = 0;
     int map_height = 0;
