@@ -1,13 +1,17 @@
+// Includes
 #include <ros/ros.h>
+
+// Include header files
 #include "../include/Rossenheimer/Goal/Goal.h"
 
+//--Goal Constructor ----------------------------
 Goal::Goal()
 {
     ROS_INFO("Goal Created.");
-    
 }
+
+//--Goal Object Constructor ----------------------------
 Goal::Goal(double px, double py, double pz, double ox, double oy, double oz, double ow, int type, int id){
-    ROS_INFO("OH SHIT GOAL CREATED OH NO.");
     ROS_INFO("Goal Created");
     Target_x = px;
     Target_y = py;
@@ -22,6 +26,7 @@ Goal::Goal(double px, double py, double pz, double ox, double oy, double oz, dou
     april_id = id;
 }
 
+// GetPosition used to return a desired index of goal position/pose
 double Goal::GetPosition(int req)
 {
     switch(req)
@@ -49,27 +54,19 @@ double Goal::GetPosition(int req)
 
     }
 }
-// Goal::Goal(double coord_x, double coord_y, double orientation)
-// {
-//     ROS_INFO("Goal Created");
-//     status = true;
-  
-//     goal.target_pose.header.frame_id = "map";
-//     goal.target_pose.header.stamp = ros::Time::now();
-    
-//     goal.target_pose.pose.position.x = coord_x;
-//     goal.target_pose.pose.position.y = coord_y;
-//     goal.target_pose.pose.orientation.w = orientation;
-// }
 
+//--Destructor--
 Goal::~Goal(){
-    ROS_INFO("OH SHIT GOAL DESTROYED OH YEAH.");
+    
 }
 
+// GetType used to return the type of goal
 int Goal::GetType()
 {
     return Target_type;
 }
+
+//ActionTask is a pure virtual function redefined by child classes
 void Goal::actionTask(){
 
 }
