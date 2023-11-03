@@ -11,7 +11,7 @@
 #include <nav_msgs/Odometry.h>      // msg for odometer subscriber
 #include <iostream>         
 
-// indexes for Lidar scan data
+// indexes for Lidar scan dataP
 enum
 {
     CENTER = 0,

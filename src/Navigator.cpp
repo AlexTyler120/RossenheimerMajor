@@ -22,7 +22,7 @@ Navigator::Navigator(ros::NodeHandle& nh_): ac_("move_base", true)
   ROS_INFO("[CTor]: Navigator.");
   
   // instantiate the publisher for move_base
-  move_pub = nh_.advertise<geometry_msgs::PoseStamped>("move_base_simple/goal", 10);
+  goal_pub = nh_.advertise<geometry_msgs::PoseStamped>("move_base_simple/goal", 10);
 }
 
 //--Destructor--
@@ -306,23 +306,23 @@ void Navigator::MoveToGoal(Goal* mvPoint)
 {  
 
   // instantiate target of TB3
-  geometry_msgs::PoseStamped target;
-  target.header.frame_id = "map";
-  target.header.stamp = ros::Time::now();
+  geometry_msgs::PoseStamped goal;
+  goal.header.frame_id = "map";
+  goal.header.stamp = ros::Time::now();
 
   // Store position of incident in target
-  target.pose.position.x = mvPoint->GetPosition(0);
-  target.pose.position.y = mvPoint->GetPosition(1);
-  target.pose.position.z = mvPoint->GetPosition(2);
+  goal.pose.position.x = mvPoint->GetPosition(0);
+  goal.pose.position.y = mvPoint->GetPosition(1);
+  goal.pose.position.z = mvPoint->GetPosition(2);
 
   // Store orientation at incident in target
-  target.pose.orientation.x = mvPoint->GetPosition(3);
-  target.pose.orientation.y = mvPoint->GetPosition(4);   
-  target.pose.orientation.z = mvPoint->GetPosition(5);
-  target.pose.orientation.w = mvPoint->GetPosition(6);
+  goal.pose.orientation.x = mvPoint->GetPosition(3);
+  goal.pose.orientation.y = mvPoint->GetPosition(4);   
+  goal.pose.orientation.z = mvPoint->GetPosition(5);
+  goal.pose.orientation.w = mvPoint->GetPosition(6);
 
   // Publish the msg. 
-  move_pub.publish(target);  
+  goal_pub.publish(goal);  
 
   // Wait for the action server to come up
   while (!ac_.waitForServer(ros::Duration(5.0)))
@@ -332,7 +332,7 @@ void Navigator::MoveToGoal(Goal* mvPoint)
 
   // Send the goal to the action server
   move_base_msgs::MoveBaseGoal mb_goal;
-  mb_goal.target_pose = target;
+  mb_goal.target_pose = goal;
   ac_.sendGoal(mb_goal);
 
   // Wait for the result

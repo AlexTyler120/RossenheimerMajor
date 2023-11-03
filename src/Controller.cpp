@@ -14,7 +14,7 @@ Controller::Controller(Sensor* readOdometer, ros::NodeHandle& nh_)
     _Navigator = new Navigator(nh_);    // instantiate navigator
 
     // Setting the position and orientation of Base in envrionemnt
-    _Navigator->SetBase(-1.89, 0.1077, 0.0001, 0.0, 0.0, 0.0, 1.0, TYPE_BASE, -1);
+    _Navigator->SetBase();
 
     // Initialise state in frontier detection - first objective
     turtlebot3_state_num = TB3_FRONTIER_DETECTION;
@@ -44,7 +44,7 @@ void Controller::FrontierDetection(bool tag_detected, double tag_offset, int tag
   {
 
     // if the tagID does not already exist:
-    if (!_Navigator->findTag(tagID))
+    if (!_Navigator->FindTag(tagID))
     {
         ROS_INFO("CREATING NEW TAG");
         
@@ -117,7 +117,7 @@ void Controller::SaveWorld(Sensor* readLidar, Sensor* readOdometer, Motor* readM
       
       // determine needed supplies and corresponding route for TB3
       // as per priority book and remaining incidents
-      _Navigator->algorithm();                            
+      _Navigator->Algorithm();                            
       
       // once at goal, TB3 resupplied, route planned:
       // enter move to goal case

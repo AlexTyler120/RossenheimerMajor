@@ -97,7 +97,7 @@ class Navigator {
         
         //--Private Members--
 
-        ros::Publisher move_pub;    // publisher for move_base
+        ros::Publisher goal_pub;    // publisher for move_base
 
         // create an object of type SimpleActionClient for 
         // move_base to interact with
