@@ -3,21 +3,23 @@
 #define TB3_
 
 
-// including ros package
+// iIncludes
 #include <ros/ros.h>
 #include <nav_msgs/Path.h>
 #include <visualization_msgs/Marker.h>
 #include <geometry_msgs/Point.h>
 
-// include necessary header files
+// Include headers
 #include "Sensors/Sensor.h"
 #include "Motor.h"
 #include "Controller.h"
 #include "Camera.h"
 
+//Odom reading values
 #define ODOM_X_INDEX 2
 #define ODOM_Y_INDEX 3
 
+//Forward declaration
 class Controller;
 class Navigator;
 class Goal;
@@ -26,28 +28,27 @@ class Goal;
 //---TurtleBot3 Implementation-------------------------------------
 // TurtleBot3 is a class which resembles TurtleBot3 Burger Bot
 // in an object oriented environment. It possesses (inherits) the
-// component classes: Sensors (2 of them), a motor, and a controller
-// (where the algorithm for maze solving is determined).
+// component classes: Sensors (2 of them), a motor, a camera and a controller
 //
 class TurtleBot3
 {
    public:
-        //--Constructors and Destructors--
-        TurtleBot3(ros::NodeHandle& nh_);
-        ~TurtleBot3();
+          //--Constructors and Destructors--
+          TurtleBot3(ros::NodeHandle& nh_);
+          ~TurtleBot3();
 
 
-        //--Functionality--
-        // solveMaze utilises the member _controller in the TurtleBot3
-        // to run the maze solving algorithm, and run necessary
-        // manoeuvres and movements, depending on readings from the
-        // Sensors.
-        bool solveMaze();
+          //--Functionality--
+          // extinguish_world utilises the member _controller in the TurtleBot3
+          // to run the goal setting and reaching algorithm, and run necessary
+          // maneuvers and movements, depending on readings from the
+          // Sensors.
+          bool ExtinguishWorld();
 
-        void addPathPoint();       // add path point to vector
-        double getOdom(int req);   // get odometer data
+          void AddPathPoint();       // add path point to vector
+          double GetOdom(int req);   // get odometer data
 
-        void updateTank(int* depot_array);
+          void UpdateTank(int* depot_array);
 
    private:
           //-- Consts for the TurtleBot3 
@@ -64,9 +65,7 @@ class TurtleBot3
           Controller* _controller;                    // pointer to controller (brain/ algorithm of TurtleBot3)
           Camera* _camera;
 
-          // Odometer* OdometerTest;
-
-          ros::Publisher marker_pub;                           // publisher for path
+          ros::Publisher marker_pub;                           //publisher for path
           visualization_msgs::Marker path_marker;
 };
 
