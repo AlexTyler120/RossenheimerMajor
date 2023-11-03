@@ -46,16 +46,17 @@ class Odometer: public Sensor
         // current position (pose)
         void sensorSetData(double pose);
 
-        double getOdom_x();
-        double getOdom_y();
-
     private:
+        // Subscriber and publishers
         ros::Subscriber odom_sub_;
         ros::Publisher position_pub_;
         ros::Publisher orientation_pub;
+
+        // Variables to store the current and previous pose of the turtlebot
         double tb3_pose_;
         double prev_tb3_pose_;
 
+        // Position and orientation storing member variables
         double odom_x;
         double odom_y;
         double odom_z;

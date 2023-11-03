@@ -14,10 +14,12 @@ Odometer::Odometer()
 }
 Odometer::Odometer(ros::NodeHandle& nh_)
 {
+    // Creating subscriberes and publishers
     odom_sub_ = nh_.subscribe("odom", 10, &Odometer::sensorCallBack, this);
     position_pub_ = nh_.advertise<geometry_msgs::Point>("robot_position", 10);
     orientation_pub = nh_.advertise<geometry_msgs::Quaternion>("robot_orientation", 10);
 
+    // initial pose positions
     tb3_pose_ = 0.0;
     prev_tb3_pose_ = 0.0;
 }
@@ -55,7 +57,7 @@ void Odometer::sensorCallBack(const nav_msgs::Odometry::ConstPtr &msg)
     orientation.z = pose_z;
     orientation.w = pose_w;
 
-
+    // Publishing position and orientation
     position_pub_.publish(position);
     orientation_pub.publish(orientation);
     
