@@ -113,7 +113,10 @@ void Controller::SaveWorld(Sensor* readLidar, Sensor* readOdometer, Motor* readM
       ROS_INFO("TB3_MOVE_BASE.");
       
       // navigate to stored base location
-      _Navigator->MoveToGoal(_Navigator->GetBase());      
+      while(!_Navigator->MoveToGoal(_Navigator->GetBase()))
+      {
+        _Navigator->MoveToGoal(_Navigator->GetBase());
+      };      
       
       // determine needed supplies and corresponding route for TB3
       // as per priority book and remaining incidents
@@ -134,7 +137,11 @@ void Controller::SaveWorld(Sensor* readLidar, Sensor* readOdometer, Motor* readM
       // iterate through all incidents in the planned route
       for (auto it: _Navigator->GetAddress())
       {
-        _Navigator->MoveToGoal(it);     // move to each incident
+        // waiting until TB3 has moved to each goal in addresses
+        while (!_Navigator->MoveToGoal(it))
+        {
+          _Navigator->MoveToGoal(it);     // move to each incident
+        }
       }
 
       // now that incidents have been treated
@@ -161,9 +168,13 @@ void Controller::SaveWorld(Sensor* readLidar, Sensor* readOdometer, Motor* readM
 
     case TB3_END:
       ROS_INFO("WORLD SAVED");
-      // return to the Base Address.
-      _Navigator->MoveToGoal(_Navigator->GetBase());  
 
+      // navigate to the Base Address.
+      while (!_Navigator->MoveToGoal(_Navigator->GetBase()))
+      {
+        _Navigator->MoveToGoal(_Navigator->GetBase());  
+      }
+      
       // check size of priority book (data structure of all incidents)
       // size of each priority array (0, 1, 2) should be 0.
       _Navigator->PrintBook();

@@ -302,7 +302,7 @@ void Navigator::SortGoals()
 // in conjunction with move_base and the actionlib::SimpleClientGoalState to get the TB3, to
 // navigate to a desired Goal/ incident location. It takes in a pointer to an incident/ goal.
 
-void Navigator::MoveToGoal(Goal* mvPoint)
+bool Navigator::MoveToGoal(Goal* mvPoint)
 {  
 
   // instantiate target of TB3
@@ -343,9 +343,11 @@ void Navigator::MoveToGoal(Goal* mvPoint)
   {
     mvPoint->actionTask();
     ROS_INFO("The robot has reached the goal");
+    return true;
   }
   else
   {
     ROS_INFO("The robot failed to reach the goal");
+    return false;
   }
 }

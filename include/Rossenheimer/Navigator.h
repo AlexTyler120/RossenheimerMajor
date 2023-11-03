@@ -53,7 +53,7 @@ class Navigator {
         // in the map, and uses move_base, incorporating global and local 
         // planner to navigate to the target position. It takes an input of
         // a pointer to a Goal.
-        void MoveToGoal(Goal* mvPoint);
+        bool MoveToGoal(Goal* mvPoint);
 
         // SetGoal takes in the april id, position and orientation of TB3
         // when it recognises a tag, and dynamically stores them in private
@@ -135,7 +135,6 @@ class Navigator {
         // is handling the incident. Once TB3 has completed its route, this vector is 
         // cleared - for the next set of incidents.
         std::vector < Goal * > _addresses;
-
 
         //--Base Parameters
 
