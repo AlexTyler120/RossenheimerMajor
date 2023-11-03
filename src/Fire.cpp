@@ -1,7 +1,10 @@
+// Includes
 #include <ros/ros.h>
 
+// Include header files
 #include "../include/Rossenheimer/Goal/GoalFire.h"
 
+//--Fire Object Constructor--
 GoalFire::GoalFire(double px, double py, double pz, double ox, double oy, double oz, double ow, int type, int id)
 {
     ROS_INFO("[CTor]: Fire.");
@@ -18,15 +21,14 @@ GoalFire::GoalFire(double px, double py, double pz, double ox, double oy, double
     april_id = id;
 }
 
-
+//--Fire Object Destructor--
 GoalFire::~GoalFire()
 {
     ROS_INFO("[DTor]:Fire Extinguished");
 } 
 
-
+//actionTask used to extinguish the fire when the goal is reached
 void GoalFire::actionTask()
 {
     ROS_INFO("Extinguishing Fire");
-    // status = false;
 }
