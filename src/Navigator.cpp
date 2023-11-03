@@ -156,7 +156,7 @@ void Navigator::Algorithm()
     }
   }
 
-  ROS_INFO("Tb3 Resupplying %d extinguishers, %d sandbags!", resupply[0], resupply[1]);
+  ROS_INFO("TB3 Resupplying %d extinguishers, %d sandbags!", resupply[0], resupply[1]);
 
   return;
   
@@ -341,10 +341,11 @@ void Navigator::MoveToGoal(Goal* mvPoint)
   // Check if the goal was reached
   if (ac_.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
   {
-      ROS_INFO("The robot has reached the goal");
+    mvPoint->actionTask();
+    ROS_INFO("The robot has reached the goal");
   }
   else
   {
-      ROS_INFO("The robot failed to reach the goal");
+    ROS_INFO("The robot failed to reach the goal");
   }
 }
