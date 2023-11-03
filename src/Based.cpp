@@ -1,7 +1,10 @@
+// Includes
 #include <ros/ros.h>
 
+// Include header files
 #include "../include/Rossenheimer/Goal/GoalBased.h"
 
+//--Based Object Constructor--
 GoalBased::GoalBased(double px, double py, double pz, double ox, double oy, double oz, double ow, int type, int id)
 {
     ROS_INFO("[CTor]: Based");
@@ -21,17 +24,14 @@ GoalBased::GoalBased(double px, double py, double pz, double ox, double oy, doub
     april_id = id;
 }
 
+//--Based Object Destrucctor--
 GoalBased::~GoalBased()
 {
     ROS_INFO("[DTor]: So not Based.");
 }
 
+//actionTask used to resupply the TurtleBot
 void GoalBased::actionTask()
 {
-    
+    ROS_INFO("Resupplying rossenheimer");
 }
-// void GoalBased::actionTask(TurtleBot3* bot)
-// {
-//     ROS_INFO("Resupplying rossenheimer");
-    
-// }
