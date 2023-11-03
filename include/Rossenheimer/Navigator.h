@@ -1,27 +1,29 @@
 #ifndef NAVIGATOR_H_
 #define NAVIGATOR_H_
 
+// include all necessary msg types
 #include <ros/ros.h>
 #include <geometry_msgs/Point.h>
-
 #include <geometry_msgs/PoseStamped.h>
 #include <actionlib/client/simple_action_client.h>
 #include <move_base_msgs/MoveBaseAction.h>
-
 #include <move_base_msgs/MoveBaseGoal.h>
 #include <actionlib_msgs/GoalStatus.h>
 
+// include relevant .h files
 #include "Sensors/Sensor.h"
 #include "Goal/Goal.h"
 #include "Goal/GoalBased.h"
 #include "Goal/GoalFire.h"
 #include "Goal/GoalFlood.h"
 
+// include standard libraries
 #include <vector>
 #include <array>
 #include <iostream>
 #include <cmath>
 
+// enum for priority status of each incident
 enum
 {
     PRIORITY0 = 0,
@@ -30,71 +32,128 @@ enum
     BASE
 };
 
+//---Navigator Implementation---------------------------------------
+// The Navigator class is inherited by Controller, which utilises,
+// the member functions in Navigator to achieve different objectives,
+// including move to base and incidents. This class utilises functions
+// to store and sort all 'Goals' found in the environment, as per their
+// priority and location.
+
 class Navigator {
     public:
+        //--Constructor--
         Navigator(ros::NodeHandle& nh_);
+
+        //--Destructor--
         ~Navigator();
-        void MoveToGoal(Goal* mvGoal);
-        void SetGoal(int april_id, double x, double y, double z, double ox, double oy, double oz, double ow);
+
+        //--Functionality--
+
+        // MoveToGoal utilises geometry_msgs to construct a target position 
+        // in the map, and uses move_base, incorporating global and local 
+        // planner to navigate to the target position. It takes an input of
+        // a pointer to a Goal.
+        void MoveToGoal(Goal* mvPoint);
+
+        // SetGoal takes in the april id, position and orientation of TB3
+        // when it recognises a tag, and dynamically stores them in private
+        // vectors.
+        void SetGoal(int aprilId, double x, double y, double z, double ox, double oy, double oz, double ow);
+        
+        // SortGoals(), utilises the vectors (_ids, _position, & _orientation), 
+        // populated by SetGoal. This function sorts these vectors into the
+        // _priorityBook. 
         void SortGoals();
         
-        void SetBase(double px, double py, double pz, double ox, double oy, double oz, double ow, int type, int id);
+        // SetBase() takes in desired inputs for the location of the Base,
+        // and constructs a Based object for the location.
+        void SetBase();
 
+        // CheckPriorityBook() determines whether there are any remaining incidents
         bool CheckPriorityBook();
+        
+        // GetBase() returns a pointer to the Base.
         Goal* GetBase();
+
+        // PrintBook prints the size of each priority vector from _priorityBook
         void PrintBook();
+
+        // GetAddress() returns a vector of pointers to Goals, which are form
+        // the route of the TB3 after its resupply at the Base
         std::vector<Goal*> GetAddress();
-        void algorithm();
-        bool findTag(int tag);
+
+        // Algorithm, determines from the incidents remaining in _priorityBook
+        // a route for the TB3 and the supplies it needs. I.e. how many fire
+        // supressants and how many sandbags. It then populates the _addresses
+        // with the Goals for the route, and removes them from the _priorityBook
+        void Algorithm();
+
+        // FindTag checks if a tag with a desired id already exists in _ids
+        // it helps Controller prevent any duplicates being made of the 
+        // Goals - from the detection of april tags. 
+        bool FindTag(int tag);
 
     private:
         
-        // Create a publisher for the goal
-        ros::Publisher goal_pub;
-        actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> ac_;
+        //--Private Members--
+
+        ros::Publisher move_pub;    // publisher for move_base
+
+        // create an object of type SimpleActionClient for 
+        // move_base to interact with
+        actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> ac_; 
         
-        // static const int numPriorities = 4;
-
-        // std::vector<std::pair< Goal *, int>> Goals;
-
-        // std::vector< std::pair<int, std::pair<std::pair<double, double>, double>>> _ids_pos;
+        //--Goal Information--
+        
+        // Vector of ids from april tags
         std::vector< int > _ids;
+
+        // Vector of array of x, y, z position, for TB3 when each Goal is detected
         std::vector< std::array< double, 3 >> _position;
+
+        // Vector of array of x, y, z, w orientation, for TB3 when each Goal is detected
         std::vector < std::array< double, 4 >> _orientation;
         
+        // Array consisting of 4 vectors. The index of each vector represents
+        // the priority of the incidents in it, with 0 being the most urgent,
+        // 3 being the least urgent, and 4 being the base Goal.
+        // This array represents a database in which all the fires and floods are recorded.
+        // April Tag to _priorityBook guide below:
+
+        // 0 - 50: Priority 0 Fire          - Require 3 fire extinguishers
+        // 51 - 99: Priority 0 Flood        - Require 3 sandbags
+        // 100 - 150: Priority 1 Fire       - Requires 2 fire extinguishers
+        // 151 - 199: Priority 1 Flood      - Requires 2 sandbags
+        // 200 - 250: Priority 2 Fire       - Requires 1 fire extinguisher
+        // 251 - 299: Priority 2 Flood      - Requires 1 sandbag
+        
         std::array< std::vector <Goal *>, (BASE + 1)> _priorityBook;
-        std::vector < Goal * > addresses;
-        Goal* BaseGoal;
 
-        // int addresses[3] = {0, 0, 0};
+        // Vector of pointers to Goals (incidents). Populated in Algorithm(),
+        // indicates the order and the route for TB3 to put out fires and block floods.
+        // Pointers to goals get removed from _priorityBook & placed here, when the TB3
+        // is handling the incident. Once TB3 has completed its route, this vector is 
+        // cleared - for the next set of incidents.
+        std::vector < Goal * > _addresses;
 
-        /* 
-            array = 
-            priority 0: {closest Goal*, 2nd closest, ..., furthest} - requires 3 items to put out
-            priority 1: {Fire }      requires 2 items to put out
-            priority 2: {Flood, Fire, Flood, Flood }      requires 1 item
-        */
 
-       /* 
-            TB3 has capacity of 3 items (fire_item, flood_item)
-            1st: fix all prio0s
-            2nd: fix Fire (p1) and Flood (p2)
-            3rd: 1 fire, 2flood items: (put out remainder of prio2s)
+        //--Base Parameters
 
-       */ 
+        // Position (xyz)
+        double BASE_PX = -1.89;
+        double BASE_PY = 0.1077;
+        double BASE_PZ = 0.0001;
 
-       // 0 - 50 : Priority 0 Fire
-       // 51 - 99 : Priority 0 Flood
+        // Orientation (xyzw)
+        double BASE_OX = 0.0;
+        double BASE_OY = 0.0;
+        double BASE_OZ = 0.0;
+        double BASE_OW = 1.0;
 
-       // 100 - 150 : Priority 1 Fire
-       // 151 - 199 : Priority 1 Flood
-
-       // 200 - 250: Priority 2 Fire
-       // 251 - 299: Priority 2 Flood
-    
-        // int GoalNum;
-        // GoalFire* FireGoal;
-        // GoalFlood* FloodGoal;
+        int BASE_ARPIL = -1;
+        
+        int PRIORITY_INDEX_SIZE = 100;  // capacity of each priority
+        int PRIORITY_DIVIDER = 50;      // halfway (between fire and flood)
 };
 
 #endif
