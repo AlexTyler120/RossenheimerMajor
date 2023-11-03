@@ -117,7 +117,7 @@ void Controller::SaveWorld(Sensor* readLidar, Sensor* readOdometer, Motor* readM
       
       // determine needed supplies and corresponding route for TB3
       // as per priority book and remaining incidents
-      _Navigator->Algorithm();                            
+      _Navigator->Algorithm();    
       
       // once at goal, TB3 resupplied, route planned:
       // enter move to goal case

@@ -154,6 +154,7 @@ class Navigator {
         
         int PRIORITY_INDEX_SIZE = 100;  // capacity of each priority
         int PRIORITY_DIVIDER = 50;      // halfway (between fire and flood)
+        int MAX_ADDRESS_SIZE = 3;
 };
 
 #endif

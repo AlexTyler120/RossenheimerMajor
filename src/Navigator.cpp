@@ -127,10 +127,10 @@ void Navigator::Algorithm()
   {
 
     // If more than 3 Prio. 2 incidents exist:
-    if (_priorityBook[PRIORITY2].size() > 3)
+    if (_priorityBook[PRIORITY2].size() > MAX_ADDRESS_SIZE)
     {
       // Conduct same process as previous method for next 3 Prio. 2 incidents
-      for (int i = 0; i < 3; i++)
+      for (int i = 0; i < MAX_ADDRESS_SIZE; i++)
       {
         _addresses.push_back(_priorityBook[PRIORITY2].front());
 
