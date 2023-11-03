@@ -3,11 +3,11 @@
 #define CONTROLLER_H
 
 
-// Include ros
-#include <ros/ros.h>
-#include <nav_msgs/OccupancyGrid.h>
-#include <std_msgs/Float32.h>
 
+#include <ros/ros.h>                    // include ros
+#include <nav_msgs/OccupancyGrid.h>     // include for geometry
+#include <std_msgs/Float32.h>           // include message type
+#include <cmath>                        // include math
 
 
 // Include all necessary header files
@@ -19,19 +19,11 @@
 #include "Navigator.h"
 
 
-#include <cmath>
 
+// case structure for each objective in project
 
-
-// enum:case structure for
 enum
 {
-// {   GET_TB3_DIRECTION = 0,
-//     TB3_FIND_WALL,
-//     TB3_RIGHT_TURN,
-//     TB3_WALL_FOLLOW,
-//     TB3_APRIL_CENTER,
-//     TB3_STOP,
     TB3_FRONTIER_DETECTION = 0,
     TB3_MOVE_BASE,
     TB3_MOVE_GOAL,
@@ -40,10 +32,12 @@ enum
 
 
 //---Controller Implementation---------------------------------------------------------------
-// The Controller of the TurtleBot3 is used to implement the desired maze solving algorithm
-// for the TurtleBot3. It uses an 'association' relationship with the Sensor and the Motor of the
-// TurtleBot3 to enact the relevant manoeuvres according to the case it is in, defined by the enum
-// above.
+// The Controller of the TurtleBot3 behaves as the brains of the TurtleBot3
+// It uses the enums above in a switch case, in which, it determines whether
+// the TB3 should be frontier detecting, moving to base (to resupply), moving
+// to the next urgent incident, or returning to base once all fires and floods 
+// have been halted.
+
 class Controller
 {
   
@@ -53,80 +47,58 @@ class Controller
 
     //--Destructor--
     ~Controller(); // default destructor
+
     //--Functionality--
-    void MazeSolver(Sensor* readLidar, Sensor* readOdometer, Motor* readMotor, Camera* readCamera);
-      
+
+    // SaveWorld uses the enums and switch case structure to determine what series of actions
+    // the TB3 should be performing. It is the central function of the class, from which other
+    // supporting functions are called to achieve the TB3's current objective.
     void SaveWorld(Sensor* readLidar, Sensor* readOdometer, Motor* readMotor, Camera* readCamera);
     
-    void frontierDetection(bool tag_detected, double tag_offset, int tagID, double px, double py, double pz, double ox, double oy, double oz, double ow);
-
-    int* getDepots();
-
+    
    private:
     //--Functionality--
     
-    double timer;
-
+    
+    // FrontierDetection utilises position and orientation data from the Odometer, and april tag
+    // data from the Camera in order to log all incidents (fires and floods) in the environment
+    // including type (fire or flood), priority (0, 1, or 2) and location of TB3 when incident
+    // encountered.
+    void FrontierDetection(bool tag_detected, double tag_offset, int tagID, double px, double py, double pz, double ox, double oy, double oz, double ow);
     
     
-    // findWall sets the TurtleBot3 on an arc trajectory leftward until a wall is found
-    void findWall(Motor* readMotor);
+    // CenterTag detects flags in the environment, and approaches them from the front.
+    // It uses data from the Camera, and Lidar to detect the flag, and then manipulates
+    // the velocity of TB3 through the Motor. 
+    void CenterTag(Camera* readCamera, Motor* readMotor, Sensor* readLidar);
 
-
-    // rightTurn turns the TurtleBot3 right until its pose is parallel to the left wall
-    void rightTurn(Sensor* readOdometer, Sensor* readLidar, Motor* readMotor);
-
-
-    // wallFollow continuously manipulates the angular velocity of the TurtleBot3
-    // to maintain the desired distance from the left wall, and direction parallel to
-    // the left wall
-    void wallFollow(double left_distance, Sensor* readLidar, Sensor* readOdometer, Motor* readMotor);
-
-
-    void centerTag(Camera* readCamera, Motor* readMotor, Sensor* readLidar);
-
+    //-- Controller inherits a Navigator.
+    // This Navigator enables Controller to achieve its objectives, using 
+    // move_base (movement to incidents) and geometry_msgs (storing position
+    // and orientation).
     Navigator* _Navigator; // controller has a navigator
 
+
     //--Private Member Variables--
-    uint8_t turtlebot3_state_num;        // variable to store case for algorithm
 
-    // std::map<int, std::pair<double, double>> tag_positions;  // map with tag ID as key, odom x and y as pair of values
+    uint8_t turtlebot3_state_num;        // variable to store case for SaveWorld()
 
-    bool odom_saved = false;  // flag to check if odometer values have been saved
-    // int prev_tagID;           // variable to store previous tag ID
+    double timer;
 
-    int prev_tagID = -1;
+    int prev_tagID = -1;                // variable to store previous April Tag ID
 
-    //--Constant Definitions--
-    double PROXIMITY        = 0.4; // prev 0.2
-    double WALL_LINEAR      = 0.12;
-    double WALL_ANGULAR     = 0.5;
-    double STATIONARY       = 0.0;
-    double RIGHT_ANGULAR    = -0.9; //prev -2.9
-    double OVERALL_LIMIT    = 0.17;
-    double DIST_LIMIT_1     = 0.003;
-    double DIST_LIMIT_2     = 0.03;
-    double FOLLOW_LINEAR    = 0.1; //prev 1.5
-    double FOLLOW_ANGULAR   = 0.7; //prev 1.5
+    // constants for flag detection
+    double STATIONARY       = 0.0;      // velocity = 0
+    double OVERALL_LIMIT    = 0.17;     // velocity upper bound
+    double FOLLOW_LINEAR    = 0.1;      // base linear velocity
+    double FOLLOW_ANGULAR   = 0.7;      // base angular velocity
+    double FLAG_IN_CENTER  = 30.0;      // offset of flag (height)
+    double FLAG_DETECT     = 15.0;      // upper bound of offset - for detection
+    double TAG_LIMIT        = 1.0;      // proximity to read tag
 
-    int MULTIPLIER_1 = 10;
-    int MULTIPLIER_2 = 20;
-    int MULTIPLIER_3 = 30;
+    // time for map exploration
+    double EXPLORATION_TIME = 200.0;
 
-    double MULTIPLIER_LIMIT = 0.7;
-
-    double FLAG_IN_CENTER  = 30.0;
-
-    double prev_x;
-    double prev_y;
-    double prev_pose;
-
-    int* depot;
-
-    // Define global variables for map dimensions and exploration completion threshold
-    int map_width = 0;
-    int map_height = 0;
-    const float completion_threshold = 0.95;  // Adjust this based on your requirements
 };
 
 
